@@ -1,0 +1,633 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4EAE86B92FA94B0400271078 /* SquareCropView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAE86B82FA94B0400271078 /* SquareCropView 2.swift */; };
+		BA000001AA000001AA000001 /* SnootApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001AA000001AA000001 /* SnootApp.swift */; };
+		BA000002AA000002AA000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002AA000002AA000002 /* ContentView.swift */; };
+		BA000003AA000003AA000003 /* Color+Snoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000003AA000003AA000003 /* Color+Snoot.swift */; };
+		BA000004AA000004AA000004 /* Dog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000004AA000004AA000004 /* Dog.swift */; };
+		BA000005AA000005AA000005 /* Medication.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000005AA000005AA000005 /* Medication.swift */; };
+		BA000006AA000006AA000006 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000006AA000006AA000006 /* OnboardingViewModel.swift */; };
+		BA000007AA000007AA000007 /* TagChipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000007AA000007AA000007 /* TagChipView.swift */; };
+		BA000008AA000008AA000008 /* ProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000008AA000008AA000008 /* ProgressBarView.swift */; };
+		BA000009AA000009AA000009 /* SectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000009AA000009AA000009 /* SectionCard.swift */; };
+		BA00000AAA00000AAA00000A /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000AAA00000AAA00000A /* OnboardingFlowView.swift */; };
+		BA00000BAA00000BAA00000B /* Step1BasicsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000BAA00000BAA00000B /* Step1BasicsView.swift */; };
+		BA00000CAA00000CAA00000C /* Step2PersonalityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000CAA00000CAA00000C /* Step2PersonalityView.swift */; };
+		BA00000DAA00000DAA00000D /* Step3BioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000DAA00000DAA00000D /* Step3BioView.swift */; };
+		BA00000EAA00000EAA00000E /* Step4FeedingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000EAA00000EAA00000E /* Step4FeedingView.swift */; };
+		BA00000FAA00000FAA00000F /* Step5WalksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000FAA00000FAA00000F /* Step5WalksView.swift */; };
+		BA000010AA000010AA000010 /* Step6BehaviourView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000010AA000010AA000010 /* Step6BehaviourView.swift */; };
+		BA000011AA000011AA000011 /* Step7HealthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000011AA000011AA000011 /* Step7HealthView.swift */; };
+		BA000012AA000012AA000012 /* Step8BedtimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000012AA000012AA000012 /* Step8BedtimeView.swift */; };
+		BA000013AA000013AA000013 /* ProfileHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000013AA000013AA000013 /* ProfileHomeView.swift */; };
+		BA000014AA000014AA000014 /* SitterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000014AA000014AA000014 /* SitterView.swift */; };
+		BA000015AA000015AA000015 /* ShareModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000015AA000015AA000015 /* ShareModal.swift */; };
+		BA000016AA000016AA000016 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000016AA000016AA000016 /* Assets.xcassets */; };
+		BA000017AA000017AA000017 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000017AA000017AA000017 /* Preview Assets.xcassets */; };
+		DS0001BF000001000DS0001BF /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DS0001FR000001000DS0001FR /* DesignSystem.swift */; };
+		PKGBF00SUPABASE0000PKGBF00 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = PKGPRD0SUPABASE000PKGPRD00 /* Supabase */; };
+		SV0001BF000001000SV0001BF /* SupabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0001FR000001000SV0001FR /* SupabaseService.swift */; };
+		SV0002BF000002000SV0002BF /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0002FR000002000SV0002FR /* AuthService.swift */; };
+		SV0003BF000003000SV0003BF /* SyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0003FR000003000SV0003FR /* SyncService.swift */; };
+		SV0004BF000004000SV0004BF /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0004FR000004000SV0004FR /* NetworkMonitor.swift */; };
+		SV0005BF000005000SV0005BF /* SupabaseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0005FR000005000SV0005FR /* SupabaseModels.swift */; };
+		SV0006BF000006000SV0006BF /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0006FR000006000SV0006FR /* AuthView.swift */; };
+		SV0007BF000007000SV0007BF /* AccountPromptBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0007FR000007000SV0007FR /* AccountPromptBanner.swift */; };
+		SV0008BF000008000SV0008BF /* SitterLinksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0008FR000008000SV0008FR /* SitterLinksView.swift */; };
+		SV0009BF000009000SV0009BF /* CreateLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0009FR000009000SV0009FR /* CreateLinkView.swift */; };
+		SV0010BF000010000SV0010BF /* VisitHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0010FR000010000SV0010FR /* VisitHistoryView.swift */; };
+		SV0011BF000011000SV0011BF /* FamilyAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0011FR000011000SV0011FR /* FamilyAccessView.swift */; };
+		SV0012BF000012000SV0012BF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SV0012FR000012000SV0012FR /* SettingsView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		4EAE86B82FA94B0400271078 /* SquareCropView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SquareCropView 2.swift"; sourceTree = "<group>"; };
+		AA000001AA000001AA000001 /* SnootApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnootApp.swift; sourceTree = "<group>"; };
+		AA000002AA000002AA000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AA000003AA000003AA000003 /* Color+Snoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Snoot.swift"; sourceTree = "<group>"; };
+		AA000004AA000004AA000004 /* Dog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dog.swift; sourceTree = "<group>"; };
+		AA000005AA000005AA000005 /* Medication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Medication.swift; sourceTree = "<group>"; };
+		AA000006AA000006AA000006 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
+		AA000007AA000007AA000007 /* TagChipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagChipView.swift; sourceTree = "<group>"; };
+		AA000008AA000008AA000008 /* ProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBarView.swift; sourceTree = "<group>"; };
+		AA000009AA000009AA000009 /* SectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionCard.swift; sourceTree = "<group>"; };
+		AA00000AAA00000AAA00000A /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
+		AA00000BAA00000BAA00000B /* Step1BasicsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step1BasicsView.swift; sourceTree = "<group>"; };
+		AA00000CAA00000CAA00000C /* Step2PersonalityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step2PersonalityView.swift; sourceTree = "<group>"; };
+		AA00000DAA00000DAA00000D /* Step3BioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step3BioView.swift; sourceTree = "<group>"; };
+		AA00000EAA00000EAA00000E /* Step4FeedingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step4FeedingView.swift; sourceTree = "<group>"; };
+		AA00000FAA00000FAA00000F /* Step5WalksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step5WalksView.swift; sourceTree = "<group>"; };
+		AA000010AA000010AA000010 /* Step6BehaviourView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step6BehaviourView.swift; sourceTree = "<group>"; };
+		AA000011AA000011AA000011 /* Step7HealthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step7HealthView.swift; sourceTree = "<group>"; };
+		AA000012AA000012AA000012 /* Step8BedtimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step8BedtimeView.swift; sourceTree = "<group>"; };
+		AA000013AA000013AA000013 /* ProfileHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHomeView.swift; sourceTree = "<group>"; };
+		AA000014AA000014AA000014 /* SitterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitterView.swift; sourceTree = "<group>"; };
+		AA000015AA000015AA000015 /* ShareModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareModal.swift; sourceTree = "<group>"; };
+		AA000016AA000016AA000016 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA000017AA000017AA000017 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		DS0001FR000001000DS0001FR /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		PRODAPP0000000000000PROD /* Snoot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Snoot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		SV0001FR000001000SV0001FR /* SupabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseService.swift; sourceTree = "<group>"; };
+		SV0002FR000002000SV0002FR /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		SV0003FR000003000SV0003FR /* SyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncService.swift; sourceTree = "<group>"; };
+		SV0004FR000004000SV0004FR /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		SV0005FR000005000SV0005FR /* SupabaseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseModels.swift; sourceTree = "<group>"; };
+		SV0006FR000006000SV0006FR /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		SV0007FR000007000SV0007FR /* AccountPromptBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountPromptBanner.swift; sourceTree = "<group>"; };
+		SV0008FR000008000SV0008FR /* SitterLinksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SitterLinksView.swift; sourceTree = "<group>"; };
+		SV0009FR000009000SV0009FR /* CreateLinkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateLinkView.swift; sourceTree = "<group>"; };
+		SV0010FR000010000SV0010FR /* VisitHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisitHistoryView.swift; sourceTree = "<group>"; };
+		SV0011FR000011000SV0011FR /* FamilyAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyAccessView.swift; sourceTree = "<group>"; };
+		SV0012FR000012000SV0012FR /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FRAMESSS000000000FRAMES /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				PKGBF00SUPABASE0000PKGBF00 /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		GRPCOMPS00000000GRPCOMPS /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				AA000007AA000007AA000007 /* TagChipView.swift */,
+				AA000008AA000008AA000008 /* ProgressBarView.swift */,
+				AA000009AA000009AA000009 /* SectionCard.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		GRPEXTS000000000GRPEXTS /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				AA000003AA000003AA000003 /* Color+Snoot.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		GRPMODELS0000000GRPMODELS /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AA000004AA000004AA000004 /* Dog.swift */,
+				AA000005AA000005AA000005 /* Medication.swift */,
+				SV0005FR000005000SV0005FR /* SupabaseModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		GRPONBRD00000000GRPONBRD /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				AA00000AAA00000AAA00000A /* OnboardingFlowView.swift */,
+				AA00000BAA00000BAA00000B /* Step1BasicsView.swift */,
+				AA00000CAA00000CAA00000C /* Step2PersonalityView.swift */,
+				AA00000DAA00000DAA00000D /* Step3BioView.swift */,
+				AA00000EAA00000EAA00000E /* Step4FeedingView.swift */,
+				AA00000FAA00000FAA00000F /* Step5WalksView.swift */,
+				AA000010AA000010AA000010 /* Step6BehaviourView.swift */,
+				AA000011AA000011AA000011 /* Step7HealthView.swift */,
+				AA000012AA000012AA000012 /* Step8BedtimeView.swift */,
+				4EAE86B82FA94B0400271078 /* SquareCropView 2.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		GRPPREVIEW000000GRPPREVIEW /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				AA000017AA000017AA000017 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		GRPPRODS00000000000PRODS /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				PRODAPP0000000000000PROD /* Snoot.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		GRPPROFL00000000GRPPROFL /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				AA000013AA000013AA000013 /* ProfileHomeView.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		GRPROOT00000000000GRPROOT = {
+			isa = PBXGroup;
+			children = (
+				GRPSNOOT00000000000SNOOT /* Snoot */,
+				GRPPRODS00000000000PRODS /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		GRPSERVS00000000GRPSERVS /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				SV0001FR000001000SV0001FR /* SupabaseService.swift */,
+				SV0002FR000002000SV0002FR /* AuthService.swift */,
+				SV0003FR000003000SV0003FR /* SyncService.swift */,
+				SV0004FR000004000SV0004FR /* NetworkMonitor.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		GRPSHARE00000000GRPSHARE /* Share */ = {
+			isa = PBXGroup;
+			children = (
+				AA000015AA000015AA000015 /* ShareModal.swift */,
+			);
+			path = Share;
+			sourceTree = "<group>";
+		};
+		GRPSITTR00000000GRPSITTR /* Sitter */ = {
+			isa = PBXGroup;
+			children = (
+				AA000014AA000014AA000014 /* SitterView.swift */,
+			);
+			path = Sitter;
+			sourceTree = "<group>";
+		};
+		GRPSNOOT00000000000SNOOT /* Snoot */ = {
+			isa = PBXGroup;
+			children = (
+				AA000001AA000001AA000001 /* SnootApp.swift */,
+				AA000002AA000002AA000002 /* ContentView.swift */,
+				DS0001FR000001000DS0001FR /* DesignSystem.swift */,
+				GRPMODELS0000000GRPMODELS /* Models */,
+				GRPVMS000000000000GRPVMS /* ViewModels */,
+				GRPSERVS00000000GRPSERVS /* Services */,
+				GRPVIEWS00000000GRPVIEWS /* Views */,
+				GRPEXTS000000000GRPEXTS /* Extensions */,
+				AA000016AA000016AA000016 /* Assets.xcassets */,
+				GRPPREVIEW000000GRPPREVIEW /* Preview Content */,
+			);
+			path = Snoot;
+			sourceTree = "<group>";
+		};
+		GRPVAUTH00000000GRPVAUTH /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				SV0006FR000006000SV0006FR /* AuthView.swift */,
+				SV0007FR000007000SV0007FR /* AccountPromptBanner.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		GRPVFAMAC00000GRPVFAMAC0 /* FamilyAccess */ = {
+			isa = PBXGroup;
+			children = (
+				SV0011FR000011000SV0011FR /* FamilyAccessView.swift */,
+			);
+			path = FamilyAccess;
+			sourceTree = "<group>";
+		};
+		GRPVIEWS00000000GRPVIEWS /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				GRPCOMPS00000000GRPCOMPS /* Components */,
+				GRPONBRD00000000GRPONBRD /* Onboarding */,
+				GRPPROFL00000000GRPPROFL /* Profile */,
+				GRPSITTR00000000GRPSITTR /* Sitter */,
+				GRPSHARE00000000GRPSHARE /* Share */,
+				GRPVAUTH00000000GRPVAUTH /* Auth */,
+				GRPVSITLNK0000GRPVSITLNK /* SitterLinks */,
+				GRPVVISLG00000GRPVVISLG0 /* VisitLog */,
+				GRPVFAMAC00000GRPVFAMAC0 /* FamilyAccess */,
+				GRPVSETTG00000GRPVSETTG0 /* Settings */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		GRPVMS000000000000GRPVMS /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AA000006AA000006AA000006 /* OnboardingViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		GRPVSETTG00000GRPVSETTG0 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				SV0012FR000012000SV0012FR /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		GRPVSITLNK0000GRPVSITLNK /* SitterLinks */ = {
+			isa = PBXGroup;
+			children = (
+				SV0008FR000008000SV0008FR /* SitterLinksView.swift */,
+				SV0009FR000009000SV0009FR /* CreateLinkView.swift */,
+			);
+			path = SitterLinks;
+			sourceTree = "<group>";
+		};
+		GRPVVISLG00000GRPVVISLG0 /* VisitLog */ = {
+			isa = PBXGroup;
+			children = (
+				SV0010FR000010000SV0010FR /* VisitHistoryView.swift */,
+			);
+			path = VisitLog;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		TARGET000000000000TARGET /* Snoot */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = TGTCFL00000000000TGTCFL /* Build configuration list for PBXNativeTarget "Snoot" */;
+			buildPhases = (
+				SOURCES00000000000SOURCES /* Sources */,
+				FRAMESSS000000000FRAMES /* Frameworks */,
+				RESOURC00000000000RESOURC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Snoot;
+			packageProductDependencies = (
+				PKGPRD0SUPABASE000PKGPRD00 /* Supabase */,
+			);
+			productName = Snoot;
+			productReference = PRODAPP0000000000000PROD /* Snoot.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PROJECT000000000PROJECT00 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					TARGET000000000000TARGET = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = PROJCFL000000000PROJCFL0 /* Build configuration list for PBXProject "Snoot" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = GRPROOT00000000000GRPROOT;
+			packageReferences = (
+				PKGREFSUPABASE000PKGREFSP /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
+			productRefGroup = GRPPRODS00000000000PRODS /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				TARGET000000000000TARGET /* Snoot */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		RESOURC00000000000RESOURC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BA000016AA000016AA000016 /* Assets.xcassets in Resources */,
+				BA000017AA000017AA000017 /* Preview Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		SOURCES00000000000SOURCES /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BA000001AA000001AA000001 /* SnootApp.swift in Sources */,
+				BA000002AA000002AA000002 /* ContentView.swift in Sources */,
+				BA000003AA000003AA000003 /* Color+Snoot.swift in Sources */,
+				BA000004AA000004AA000004 /* Dog.swift in Sources */,
+				BA000005AA000005AA000005 /* Medication.swift in Sources */,
+				BA000006AA000006AA000006 /* OnboardingViewModel.swift in Sources */,
+				BA000007AA000007AA000007 /* TagChipView.swift in Sources */,
+				BA000008AA000008AA000008 /* ProgressBarView.swift in Sources */,
+				BA000009AA000009AA000009 /* SectionCard.swift in Sources */,
+				BA00000AAA00000AAA00000A /* OnboardingFlowView.swift in Sources */,
+				BA00000BAA00000BAA00000B /* Step1BasicsView.swift in Sources */,
+				BA00000CAA00000CAA00000C /* Step2PersonalityView.swift in Sources */,
+				BA00000DAA00000DAA00000D /* Step3BioView.swift in Sources */,
+				BA00000EAA00000EAA00000E /* Step4FeedingView.swift in Sources */,
+				BA00000FAA00000FAA00000F /* Step5WalksView.swift in Sources */,
+				BA000010AA000010AA000010 /* Step6BehaviourView.swift in Sources */,
+				BA000011AA000011AA000011 /* Step7HealthView.swift in Sources */,
+				BA000012AA000012AA000012 /* Step8BedtimeView.swift in Sources */,
+				4EAE86B92FA94B0400271078 /* SquareCropView 2.swift in Sources */,
+				BA000013AA000013AA000013 /* ProfileHomeView.swift in Sources */,
+				BA000014AA000014AA000014 /* SitterView.swift in Sources */,
+				BA000015AA000015AA000015 /* ShareModal.swift in Sources */,
+				SV0001BF000001000SV0001BF /* SupabaseService.swift in Sources */,
+				SV0002BF000002000SV0002BF /* AuthService.swift in Sources */,
+				SV0003BF000003000SV0003BF /* SyncService.swift in Sources */,
+				SV0004BF000004000SV0004BF /* NetworkMonitor.swift in Sources */,
+				SV0005BF000005000SV0005BF /* SupabaseModels.swift in Sources */,
+				SV0006BF000006000SV0006BF /* AuthView.swift in Sources */,
+				SV0007BF000007000SV0007BF /* AccountPromptBanner.swift in Sources */,
+				SV0008BF000008000SV0008BF /* SitterLinksView.swift in Sources */,
+				SV0009BF000009000SV0009BF /* CreateLinkView.swift in Sources */,
+				SV0010BF000010000SV0010BF /* VisitHistoryView.swift in Sources */,
+				SV0011BF000011000SV0011BF /* FamilyAccessView.swift in Sources */,
+				SV0012BF000012000SV0012BF /* SettingsView.swift in Sources */,
+				DS0001BF000001000DS0001BF /* DesignSystem.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		PROJDBG0000000000PROJDBG0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_CYCLE = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		PROJREL0000000000PROJREL0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_CYCLE = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		TGTDBG000000000000TGTDBG0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Snoot/Preview Content\"";
+				DEVELOPMENT_TEAM = TQ48K75R8J;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Snoot uses your camera to take a photo of your dog.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Snoot uses your photo library to add a photo of your dog.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.snoot.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		TGTREL000000000000TGTREL0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Snoot/Preview Content\"";
+				DEVELOPMENT_TEAM = TQ48K75R8J;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Snoot uses your camera to take a photo of your dog.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Snoot uses your photo library to add a photo of your dog.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.snoot.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		PROJCFL000000000PROJCFL0 /* Build configuration list for PBXProject "Snoot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				PROJDBG0000000000PROJDBG0 /* Debug */,
+				PROJREL0000000000PROJREL0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		TGTCFL00000000000TGTCFL /* Build configuration list for PBXNativeTarget "Snoot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				TGTDBG000000000000TGTDBG0 /* Debug */,
+				TGTREL000000000000TGTREL0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		PKGREFSUPABASE000PKGREFSP /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		PKGPRD0SUPABASE000PKGPRD00 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PKGREFSUPABASE000PKGREFSP /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = PROJECT000000000PROJECT00 /* Project object */;
+}

@@ -46,3 +46,9 @@ supabase/.temp/
 .vscode/
 .idea/
 *.swp
+
+# Lock files
+.~lock.*#
+
+# Vercel local config (contains project/org IDs — keep local)
+.vercel/
