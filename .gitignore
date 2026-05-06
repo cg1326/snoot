@@ -1,0 +1,48 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode
+*.xcuserstate
+xcuserdata/
+DerivedData/
+*.ipa
+*.dSYM.zip
+*.dSYM
+build/
+*.xccheckout
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# Swift / SwiftData
+*.hmap
+
+# Node / snoot-web
+node_modules/
+snoot-web/.env
+snoot-web/.env.local
+snoot-web/dist/
+snoot-web/.vite/
+
+# Supabase
+supabase/.branches/
+supabase/.temp/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+*.pem
+
+# Editor
+.vscode/
+.idea/
+*.swp
