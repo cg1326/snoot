@@ -96,7 +96,7 @@ struct SitterView: View {
                         }
 
                         // Behaviour flags
-                        if !dog.fearTriggers.isEmpty || dog.separationAnxiety != "None" {
+                        if !dog.fearTriggers.isEmpty || dog.separationAnxiety != "None" || !dog.comfortItems.isEmpty || !dog.pottySignal.isEmpty {
                             SitterSection(icon: "exclamationmark.triangle", title: "Heads up", iconColor: .orange) {
                                 if !dog.fearTriggers.isEmpty {
                                     InfoRow(label: "Fears / triggers", value: dog.fearTriggers.joined(separator: ", "), highlight: true)
@@ -109,6 +109,9 @@ struct SitterView: View {
                                 }
                                 if !dog.pottySignal.isEmpty {
                                     InfoRow(label: "Potty signal", value: dog.pottySignal)
+                                }
+                                if !dog.comfortItems.isEmpty {
+                                    InfoRow(label: "Comfort items", value: dog.comfortItems)
                                 }
                             }
                         }

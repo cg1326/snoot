@@ -63,7 +63,7 @@ export default function App() {
     if (hash && (hash.includes('access_token=') || hash.includes('type=invite') || hash.includes('type=recovery'))) {
       setIsInvite(true);
       setLoading(false);
-      
+
       // Just track that we are in invite mode; the user will set password via form
       return;
     }
@@ -75,15 +75,18 @@ export default function App() {
     }
 
     fetch(apiUrl, {
-      headers: {
-        'Accept': 'application/json',
-        'apikey': 'sb_publishable_F6P82ztNKJI8TErL565OgQ_tYK-cKcr'
-      }
+      cache: 'no-store',
+      headers: { 'Accept': 'application/json' }
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then(json => {
         if (json.error) {
           setError(json.error);
+        } else if (!json.dog || !json.careMap) {
+          setError('Failed to load care guide. Please try again.');
         } else {
           setData(json);
         }
@@ -93,6 +96,24 @@ export default function App() {
         setError('Failed to load care guide. Please try again.');
       })
       .finally(() => setLoading(false));
+  }, [token, apiUrl]);
+
+  // Silently re-fetch when the tab becomes visible — picks up any profile
+  // changes the owner made in the app while the sitter had the guide open.
+  useEffect(() => {
+    if (!token) return;
+    const refresh = () => {
+      if (document.visibilityState !== 'visible') return;
+      fetch(apiUrl, {
+        cache: 'no-store',
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(res => res.ok ? res.json() : null)
+        .then(json => { if (json && !json.error && json.dog && json.careMap) setData(json); })
+        .catch(() => {});
+    };
+    document.addEventListener('visibilitychange', refresh);
+    return () => document.removeEventListener('visibilitychange', refresh);
   }, [token, apiUrl]);
 
   const handleLogVisit = async (e: React.FormEvent) => {
@@ -344,7 +365,7 @@ export default function App() {
       )}
 
       {/* Heads up */}
-      {(fearTriggers.length > 0 || (behaviour.separation_anxiety && behaviour.separation_anxiety !== "None" && behaviour.separation_anxiety !== "none") || behaviour.separation_anxiety_notes || behaviour.potty_signal) && (
+      {(fearTriggers.length > 0 || (behaviour.separation_anxiety && behaviour.separation_anxiety !== "None" && behaviour.separation_anxiety !== "none") || behaviour.separation_anxiety_notes || behaviour.potty_signal || behaviour.comfort_items) && (
         <div className="section">
           <div className="section-header">
             <div className="section-icon icon-yellow">⚠️</div>
@@ -353,11 +374,12 @@ export default function App() {
           {fearTriggers.length > 0 && <div className="info-row"><div className="info-label">Fears</div><div className="info-value highlight">{fearTriggers.join(", ")}</div></div>}
           {((behaviour.separation_anxiety && behaviour.separation_anxiety !== "None" && behaviour.separation_anxiety !== "none") || behaviour.separation_anxiety_notes) && (
             <>
-              <div className="info-row"><div className="info-label">Separation</div><div className="info-value">{behaviour.separation_anxiety}</div></div>
+              <div className="info-row"><div className="info-label">Separation anxiety</div><div className="info-value">{behaviour.separation_anxiety}</div></div>
               {behaviour.separation_anxiety_notes && <div className="info-row"><div className="info-label">What helps</div><div className="info-value">{behaviour.separation_anxiety_notes}</div></div>}
             </>
           )}
           {behaviour.potty_signal && <div className="info-row"><div className="info-label">Potty signal</div><div className="info-value">{behaviour.potty_signal}</div></div>}
+          {behaviour.comfort_items && <div className="info-row"><div className="info-label">Comfort items</div><div className="info-value">{behaviour.comfort_items}</div></div>}
         </div>
       )}
 

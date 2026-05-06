@@ -11,6 +11,12 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const jsonHeaders = {
+  ...corsHeaders,
+  "Content-Type": "application/json",
+  "Cache-Control": "no-store",
+};
+
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -42,7 +48,7 @@ serve(async (req: Request) => {
     };
     if (wantsJson) {
       return new Response(JSON.stringify({ dog: mockDog, link: mockLink, careMap: mockCare }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: jsonHeaders,
       });
     }
     return new Response(buildCareGuidePage(mockDog, mockLink, mockCare, token), { headers: { "Content-Type": "text/html; charset=utf-8" } });
@@ -76,7 +82,7 @@ serve(async (req: Request) => {
 
   if (linkErr || !link) {
     return new Response(wantsJson ? JSON.stringify({ error: "This link doesn't exist." }) : errorPage("This link doesn't exist.", ""), {
-      headers: { ...corsHeaders, "Content-Type": wantsJson ? "application/json" : "text/html; charset=utf-8" },
+      headers: wantsJson ? jsonHeaders : { ...corsHeaders, "Content-Type": "text/html; charset=utf-8" },
       status: 404,
     });
   }
@@ -101,7 +107,7 @@ serve(async (req: Request) => {
         `${dog.name}'s care guide is no longer active.`,
         "Ask the owner for a new link."
       ),
-      { headers: { ...corsHeaders, "Content-Type": wantsJson ? "application/json" : "text/html; charset=utf-8" }, status: 410 }
+      { headers: wantsJson ? jsonHeaders : { ...corsHeaders, "Content-Type": "text/html; charset=utf-8" }, status: 410 }
     );
   }
 
@@ -111,7 +117,7 @@ serve(async (req: Request) => {
         `${dog.name}'s care guide has expired.`,
         "Ask the owner for a new link."
       ),
-      { headers: { ...corsHeaders, "Content-Type": wantsJson ? "application/json" : "text/html; charset=utf-8" }, status: 410 }
+      { headers: wantsJson ? jsonHeaders : { ...corsHeaders, "Content-Type": "text/html; charset=utf-8" }, status: 410 }
     );
   }
 
@@ -128,7 +134,7 @@ serve(async (req: Request) => {
 
   if (wantsJson) {
     return new Response(JSON.stringify({ dog, link, careMap }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: jsonHeaders,
     });
   }
 
@@ -201,7 +207,7 @@ async function handleVisitLog(req: Request, token: string, url: URL, corsHeaders
   
   if (wantsJson) {
     return new Response(JSON.stringify({ success: true, message: "Visit logged successfully." }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: jsonHeaders,
     });
   }
   
@@ -445,14 +451,15 @@ function buildCareGuidePage(
   ).join('<div class="divider"></div>')) : ""}
 
   <!-- Heads up -->
-  ${(fearTriggers.length || (behaviour.separation_anxiety && behaviour.separation_anxiety !== "None" && behaviour.separation_anxiety !== "none"))
+  ${(fearTriggers.length || (behaviour.separation_anxiety && behaviour.separation_anxiety !== "None" && behaviour.separation_anxiety !== "none") || behaviour.potty_signal || behaviour.comfort_items)
     ? sectionHtml("&#x26A0;&#xFE0F;", "#e67e22", "Heads up", `
-      ${fearTriggers.length ? `<div class="info-row"><div className="info-label">Fears</div><div className="info-value highlight">${esc(fearTriggers.join(", "))}</div></div>` : ""}
+      ${fearTriggers.length ? `<div class="info-row"><div class="info-label">Fears</div><div class="info-value highlight">${esc(fearTriggers.join(", "))}</div></div>` : ""}
       ${(behaviour.separation_anxiety && behaviour.separation_anxiety !== "None" && behaviour.separation_anxiety !== "none")
-        ? `<div class="info-row"><div class="info-label">Separation</div><div class="info-value">${esc(behaviour.separation_anxiety as string)}</div></div>
+        ? `<div class="info-row"><div class="info-label">Separation anxiety</div><div class="info-value">${esc(behaviour.separation_anxiety as string)}</div></div>
            ${behaviour.separation_anxiety_notes ? `<div class="info-row"><div class="info-label">What helps</div><div class="info-value">${esc(behaviour.separation_anxiety_notes as string)}</div></div>` : ""}`
         : ""}
       ${behaviour.potty_signal ? `<div class="info-row"><div class="info-label">Potty signal</div><div class="info-value">${esc(behaviour.potty_signal as string)}</div></div>` : ""}
+      ${behaviour.comfort_items ? `<div class="info-row"><div class="info-label">Comfort items</div><div class="info-value">${esc(behaviour.comfort_items as string)}</div></div>` : ""}
     `) : ""}
 
   <!-- Emergency contacts -->

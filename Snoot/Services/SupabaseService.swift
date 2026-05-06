@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import Supabase
 
 // ─────────────────────────────────────────────────────────────
@@ -31,10 +32,13 @@ final class SupabaseService {
     // MARK: - Photo upload
     /// Uploads JPEG data to the dog-photos bucket and returns the public URL string.
     func uploadDogPhoto(data: Data, dogId: String) async throws -> String {
+        // Convert to JPEG so the content type is always correct regardless of
+        // what format PhotosPicker returned (HEIC, PNG, etc.)
+        let jpeg = UIImage(data: data).flatMap { $0.jpegData(compressionQuality: 0.85) } ?? data
         let path = "\(dogId)/photo_\(Int(Date().timeIntervalSince1970)).jpg"
         try await client.storage
             .from("dog-photos")
-            .upload(path, data: data, options: FileOptions(contentType: "image/jpeg", upsert: true))
+            .upload(path, data: jpeg, options: FileOptions(contentType: "image/jpeg", upsert: true))
         let publicURL = try client.storage.from("dog-photos").getPublicURL(path: path)
         return publicURL.absoluteString
     }

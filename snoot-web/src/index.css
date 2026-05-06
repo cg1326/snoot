@@ -141,6 +141,7 @@ p.dog-bio {
 /* Info Rows */
 .info-row {
   display: flex;
+  align-items: flex-start;
   gap: 12px;
   padding: 10px 0;
   border-bottom: 1px solid rgba(80, 55, 40, 0.04);
@@ -152,7 +153,8 @@ p.dog-bio {
   font-size: 14px;
   font-weight: 600;
   color: #a09890;
-  min-width: 90px;
+  width: 90px;
+  flex-shrink: 0;
 }
 
 .info-value {

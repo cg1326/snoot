@@ -126,6 +126,7 @@ class OnboardingViewModel {
         dog.dateOfBirth = dateOfBirth
         dog.weightLbs = weightLbs
         dog.photoData = photoData
+        dog.supabasePhotoUploaded = false
         dog.personalityTags = Array(personalityTags)
         dog.bio = bio
         dog.mealsPerDay = mealsPerDay
