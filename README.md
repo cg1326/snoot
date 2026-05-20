@@ -25,7 +25,3 @@ Monthly ($3.99/mo) and yearly ($24.99/yr) plans available.
 ## Tech
 
 SwiftUI, SwiftData, StoreKit 2, Supabase (auth, database, edge functions), APNs push notifications, Vercel (sitter web view).
-
-## Status
-
-Available on the App Store as 'Snoot — Dog Care Guide'.
