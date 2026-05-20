@@ -1,8 +1,8 @@
 # snoot
 
-Most dog owners know their pet's routine cold. The problem is communicating it — pet sitters get a wall of texts, a rushed verbal handoff, or a notes app screenshot that's already out of date.
+Most dog owners know their pet's routine cold. The problem is communicating it, as pet sitters get a wall of texts, a rushed verbal handoff, or a notes app screenshot that's already out of date.
 
-Snoot is an iOS app for building a shareable dog care guide. One link covers feeding, walks, behavior, health, and medications. The sitter opens it in any browser, no app required. When they arrive, they log the visit — and the owner gets a notification.
+Snoot is an iOS app for building a shareable dog care guide. One link covers feeding, walks, behavior, health, and medications. The sitter opens it in any browser, no app required. When they arrive, they log the visit, and the owner gets a notification.
 
 ## What it does
 
