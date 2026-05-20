@@ -25,7 +25,7 @@ struct Step6BehaviourView: View {
                 // Fears / triggers
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Fears / triggers", systemImage: "bolt")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     TagChipGrid(
                         options: fearOptions,
                         selected: $vm.fearTriggers,
@@ -41,7 +41,7 @@ struct Step6BehaviourView: View {
                 // Separation anxiety
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Separation anxiety", systemImage: "heart.slash")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     SnootSegmentedControl(
                         options: anxietyOptions,
                         selection: $vm.separationAnxiety,
@@ -58,7 +58,7 @@ struct Step6BehaviourView: View {
                 // Potty signal
                 VStack(alignment: .leading, spacing: 6) {
                     Label("Potty signal", systemImage: "figure.stand")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     HighContrastTextField(placeholder: "e.g. goes to the door and stares", text: $vm.pottySignal)
                         .fieldStyle()
                 }
@@ -66,7 +66,7 @@ struct Step6BehaviourView: View {
                 // Comfort items
                 VStack(alignment: .leading, spacing: 6) {
                     Label("Comfort items", systemImage: "teddybear")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     HighContrastTextField(placeholder: "e.g. blue rope toy, worn blanket", text: $vm.comfortItems)
                         .fieldStyle()
                 }

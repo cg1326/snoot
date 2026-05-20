@@ -28,7 +28,8 @@ struct Step1BasicsView: View {
             subtitle: "Tell us about your dog.",
             vm: vm,
             onSkip: { vm.advance() },
-            continueLabel: vm.name.isEmpty ? "Skip for now" : "Continue"
+            continueLabel: "Continue",
+            continueDisabled: vm.name.trimmingCharacters(in: .whitespaces).isEmpty
         ) {
             VStack(spacing: 20) {
                 // Photo
@@ -40,10 +41,10 @@ struct Step1BasicsView: View {
                         } else {
                             VStack(spacing: 8) {
                                 Image(systemName: "camera.fill")
-                                    .font(.system(size: 28))
+                                    .font(.jakarta(28))
                                     .foregroundColor(.snootOrange)
                                 Text("Add photo")
-                                    .font(.system(size: 14, weight: .medium))
+                                    .font(.jakarta(14, weight: .medium))
                                     .foregroundColor(.snootOrange)
                             }
                             .frame(maxWidth: .infinity)
@@ -67,7 +68,7 @@ struct Step1BasicsView: View {
                 // Name
                 VStack(alignment: .leading, spacing: 6) {
                     Label("Name", systemImage: "pawprint.fill")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.jakarta(13, weight: .bold))
                         .foregroundColor(.snootText2)
                     HighContrastTextField(placeholder: "e.g. Biscuit", text: $vm.name)
                         .fieldStyle()
@@ -76,7 +77,7 @@ struct Step1BasicsView: View {
                 // Breed
                 VStack(alignment: .leading, spacing: 6) {
                     Label("Breed", systemImage: "magnifyingglass")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.jakarta(13, weight: .bold))
                         .foregroundColor(.snootText2)
                     Button { showBreedPicker = true } label: {
                         HStack {
@@ -84,7 +85,7 @@ struct Step1BasicsView: View {
                                 .foregroundColor(.snootBrown)
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .font(.system(size: 13))
+                                .font(.jakarta(13))
                                 .foregroundColor(.snootText2)
                         }
                         .fieldStyle()
@@ -95,7 +96,7 @@ struct Step1BasicsView: View {
                 // Date of birth
                 VStack(alignment: .leading, spacing: 6) {
                     Label("Date of birth", systemImage: "calendar")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.jakarta(13, weight: .bold))
                         .foregroundColor(.snootText2)
                     DatePicker("", selection: $vm.dateOfBirth, in: ...Date(), displayedComponents: .date)
                         .labelsHidden()
@@ -108,7 +109,7 @@ struct Step1BasicsView: View {
                 // Weight
                 VStack(alignment: .leading, spacing: 6) {
                     Label("Weight (lbs)", systemImage: "scalemass")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.jakarta(13, weight: .bold))
                         .foregroundColor(.snootText2)
                     HStack {
                         Button { if vm.weightLbs > 1 { vm.weightLbs -= 1 } } label: {
@@ -116,10 +117,10 @@ struct Step1BasicsView: View {
                         }
                         Spacer()
                         Text("\(Int(vm.weightLbs)) lbs")
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(.jakarta(20, weight: .semibold))
                             .foregroundColor(.snootBrown)
                         Spacer()
-                        Button { vm.weightLbs += 1 } label: {
+                        Button { if vm.weightLbs < 250 { vm.weightLbs += 1 } } label: {
                             Image(systemName: "plus.circle.fill").font(.title2).foregroundColor(.snootOrange)
                         }
                     }
@@ -128,6 +129,33 @@ struct Step1BasicsView: View {
                     .background(Color.white)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .shadow(color: .black.opacity(0.04), radius: 4)
+                }
+
+                // Sex
+                VStack(alignment: .leading, spacing: 6) {
+                    Label("Gender", systemImage: "circle.lefthalf.filled")
+                        .font(.jakarta(13, weight: .bold))
+                        .foregroundColor(.snootText2)
+                    HStack(spacing: 12) {
+                        ForEach(["Male", "Female"], id: \.self) { option in
+                            Button {
+                                if !vm.readOnly {
+                                    vm.gender = vm.gender == option ? "" : option
+                                }
+                            } label: {
+                                Text(option)
+                                    .font(.jakarta(14, weight: .medium))
+                                    .foregroundColor(vm.gender == option ? .white : .snootBrown)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 12)
+                                    .background(vm.gender == option ? Color.snootOrange : Color.white)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .shadow(color: .black.opacity(0.04), radius: 4)
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(vm.readOnly)
+                        }
+                    }
                 }
             }
         }

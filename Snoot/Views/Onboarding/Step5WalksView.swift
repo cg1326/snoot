@@ -21,13 +21,13 @@ struct Step5WalksView: View {
                 // Walks per day
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Walks per day", systemImage: "figure.walk")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     HStack {
                         Button { if vm.walksPerDay > 1 { vm.walksPerDay -= 1 } } label: {
                             Image(systemName: "minus.circle.fill").font(.title2).foregroundColor(Color.snootOrange)
                         }
                         Spacer()
-                        Text("\(vm.walksPerDay)").font(.system(size: 22, weight: .bold)).foregroundColor(Color.snootBrown)
+                        Text("\(vm.walksPerDay)").font(.jakarta(22, weight: .bold)).foregroundColor(Color.snootBrown)
                         Spacer()
                         Button { if vm.walksPerDay < 6 { vm.walksPerDay += 1; vm.ensureWalkTimesCount() } } label: {
                             Image(systemName: "plus.circle.fill").font(.title2).foregroundColor(Color.snootOrange)
@@ -41,10 +41,10 @@ struct Step5WalksView: View {
                 // Walk times
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Walk times", systemImage: "clock")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     ForEach(0..<vm.walksPerDay, id: \.self) { i in
                         HStack {
-                            Text("Walk \(i + 1)").font(.system(size: 14)).foregroundColor(Color.snootBrown)
+                            Text("Walk \(i + 1)").font(.jakarta(14, weight: .bold)).foregroundColor(Color.snootBrown)
                             Spacer()
                             DatePicker("", selection: Binding(
                                 get: { vm.walkTimes.indices.contains(i) ? vm.walkTimes[i] : Date() },
@@ -61,7 +61,7 @@ struct Step5WalksView: View {
                 // Duration
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Typical duration", systemImage: "timer")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     SnootSegmentedControl(
                         options: durationOptions,
                         selection: $vm.walkDurationMinutes,
@@ -72,14 +72,14 @@ struct Step5WalksView: View {
                 // Leash behaviour
                 VStack(alignment: .leading, spacing: 8) {
                     Label("On the leash", systemImage: "link")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     TagChipGrid(options: leashOptions, selected: $vm.leashBehaviours)
                 }
 
                 // Off leash
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Trusted off-leash", systemImage: "checkmark.shield")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     Toggle("Can be trusted off-leash", isOn: $vm.offLeashTrusted)
                         .tint(Color.snootSage)
                         .padding(12).background(Color.white)

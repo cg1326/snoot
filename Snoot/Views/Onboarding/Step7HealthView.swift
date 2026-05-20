@@ -8,14 +8,14 @@ struct Step7HealthView: View {
             title: "Health & meds",
             subtitle: "Anything a sitter needs to know medically?",
             vm: vm,
-            skipLabel: "All healthy — skip",
+            skipLabel: "Skip (all healthy)",
             onSkip: { vm.skip() }
         ) {
             VStack(spacing: 18) {
                 // Health conditions toggle
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Health conditions", systemImage: "cross.case")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     Toggle("Has ongoing health conditions", isOn: $vm.hasHealthConditions)
                         .tint(Color.snootSage)
                         .padding(12).background(Color.white)
@@ -32,7 +32,7 @@ struct Step7HealthView: View {
                 // Medications
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Medications", systemImage: "pill")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     ForEach(vm.medications) { med in
                         if let index = vm.medications.firstIndex(where: { $0.id == med.id }) {
                             MedicationCard(entry: $vm.medications[index]) {
@@ -44,7 +44,7 @@ struct Step7HealthView: View {
                         vm.medications.append(OnboardingViewModel.MedEntry())
                     } label: {
                         Label("Add medication", systemImage: "plus.circle")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.jakarta(14, weight: .medium))
                             .foregroundColor(Color.snootOrange)
                             .padding(12).frame(maxWidth: .infinity)
                             .background(Color.snootOrange.opacity(0.08))
@@ -55,7 +55,7 @@ struct Step7HealthView: View {
                 // Warning signs
                 VStack(alignment: .leading, spacing: 6) {
                     Label("Warning signs", systemImage: "exclamationmark.triangle")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     HighContrastTextField(placeholder: "e.g. if she skips two meals in a row, call the vet", text: $vm.warningSigns)
                         .fieldStyle()
                 }
@@ -63,7 +63,7 @@ struct Step7HealthView: View {
                 // Vet info
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Vet contact", systemImage: "stethoscope")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     HighContrastTextField(placeholder: "Vet name", text: $vm.vetName).fieldStyle()
                     HighContrastTextField(placeholder: "Clinic name", text: $vm.vetClinic).fieldStyle()
                     HighContrastTextField(placeholder: "Phone number", text: $vm.vetPhone)
@@ -73,7 +73,7 @@ struct Step7HealthView: View {
                 // Emergency contact
                 VStack(alignment: .leading, spacing: 6) {
                     Label("Owner emergency contact", systemImage: "phone")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     HighContrastTextField(placeholder: "Phone number", text: $vm.emergencyContact)
                         .keyboardType(.phonePad).fieldStyle()
                 }
@@ -92,10 +92,10 @@ struct MedicationCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("Medication").font(.system(size: 13, weight: .semibold)).foregroundColor(Color.snootBrown)
+                Text("Medication").font(.jakarta(13, weight: .semibold)).foregroundColor(Color.snootBrown)
                 Spacer()
                 Button(action: onDelete) {
-                    Image(systemName: "trash").foregroundColor(.red.opacity(0.7)).font(.system(size: 13))
+                    Image(systemName: "trash").foregroundColor(.red.opacity(0.7)).font(.jakarta(13))
                 }
             }
             HighContrastTextField(placeholder: "Name (e.g. Apoquel)", text: $entry.name).fieldStyle()

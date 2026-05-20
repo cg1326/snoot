@@ -9,12 +9,23 @@ struct ShareModal: View {
     @State private var isGeneratingLink = false
     @State private var isPDFShare = false
     @State private var exportError: String?
+    @State private var showPaywall = false
     @Environment(AuthService.self) private var auth
+    @Environment(SubscriptionService.self) private var subscriptionService
     @Environment(\.dismiss) private var dismiss
 
     enum ShareMode: String, CaseIterable {
         case daytime = "Daytime"
         case overnight = "Overnight"
+        case both = "Both"
+
+        var apiValue: String {
+            switch self {
+            case .daytime: return "daytime"
+            case .overnight: return "overnight"
+            case .both: return "both"
+            }
+        }
     }
 
     var body: some View {
@@ -31,7 +42,7 @@ struct ShareModal: View {
                     // What's included card
                     VStack(alignment: .leading, spacing: 12) {
                         Text("What's included")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.jakarta(13, weight: .heavy))
                             .foregroundColor(.snootText2)
                             .padding(.horizontal)
 
@@ -54,7 +65,7 @@ struct ShareModal: View {
                             Divider()
                             includedRow(icon: "phone.fill", label: "Emergency contacts",
                                 detail: dog.emergencyContact.isEmpty ? "Vet info" : "Owner + vet")
-                            if mode == .overnight {
+                            if mode == .overnight || mode == .both {
                                 Divider()
                                 includedRow(icon: "moon.stars", label: "Bedtime",
                                     detail: dog.sleepLocation)
@@ -68,14 +79,18 @@ struct ShareModal: View {
                     }
                     // Share via text message (Primary)
                     Button {
-                        Task { await shareViaMessage() }
+                        if dog.supabaseId != nil && auth.isAuthenticated && !subscriptionService.isPro {
+                            showPaywall = true
+                        } else {
+                            Task { await shareViaMessage() }
+                        }
                     } label: {
                         Group {
                             if isGeneratingLink {
                                 ProgressView().tint(.white)
                             } else {
                                 Label(dog.canEdit ? "Share via text message" : "Sharing restricted", systemImage: "message.fill")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .font(.jakarta(16, weight: .heavy))
                                     .foregroundColor(.white)
                             }
                         }
@@ -95,7 +110,7 @@ struct ShareModal: View {
                                 ProgressView().tint(.snootOrange)
                             } else {
                                 Label("Send as PDF file", systemImage: "doc.fill")
-                                    .font(.system(size: 16, weight: .semibold))
+                                    .font(.jakarta(16, weight: .semibold))
                                     .foregroundColor(.snootOrange)
                             }
                         }
@@ -126,6 +141,7 @@ struct ShareModal: View {
                         : []
                 )
             }
+            .sheet(isPresented: $showPaywall) { PaywallView(isPresented: $showPaywall) }
             .alert("Export failed", isPresented: .init(
                 get: { exportError != nil },
                 set: { if !$0 { exportError = nil } }
@@ -142,15 +158,15 @@ struct ShareModal: View {
     private func includedRow(icon: String, label: String, detail: String) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .font(.system(size: 13))
+                .font(.jakarta(13))
                 .foregroundColor(.snootOrange)
                 .frame(width: 22)
             Text(label)
-                .font(.system(size: 14, weight: .medium))
+                .font(.jakarta(14, weight: .medium))
                 .foregroundColor(.snootBrown)
             Spacer()
             Text(detail)
-                .font(.system(size: 13))
+                .font(.jakarta(13))
                 .foregroundColor(.snootText2)
                 .lineLimit(1)
         }
@@ -170,7 +186,7 @@ struct ShareModal: View {
         defer { isGeneratingLink = false }
 
         do {
-            let apiMode = mode == .overnight ? "overnight" : "daytime"
+            let apiMode = mode.apiValue
             let existingLinks = try await SyncService.shared.fetchSitterLinks(dogId: dogId)
             let activeLink = existingLinks.first { $0.mode == apiMode && $0.active }
             
@@ -198,7 +214,7 @@ struct ShareModal: View {
         isRenderingPDF = true
         defer { isRenderingPDF = false }
 
-        let content = CareGuidePrintView(dog: dog, isOvernight: mode == .overnight)
+        let content = CareGuidePrintView(dog: dog, isOvernight: mode == .overnight || mode == .both)
         let renderer = ImageRenderer(content: content)
         renderer.scale = UIScreen.main.scale
 
@@ -240,7 +256,7 @@ struct ShareModal: View {
             lines += ["Free feed throughout the day"]
         } else {
             let times = dog.mealTimesData.prefix(dog.mealsPerDay).map { fmt.string(from: $0) }.joined(separator: " & ")
-            lines += ["\(dog.mealsPerDay) meal\(dog.mealsPerDay == 1 ? "" : "s")/day\(times.isEmpty ? "" : " — \(times)")"]
+            lines += ["\(dog.mealsPerDay) meal\(dog.mealsPerDay == 1 ? "" : "s")/day\(times.isEmpty ? "" : ", at \(times)")"]
         }
         if !dog.portionSize.isEmpty {
             lines += ["\(dog.portionSize) \(dog.portionUnit) of \(dog.foodBrand.isEmpty ? "their food" : dog.foodBrand)"]
@@ -255,7 +271,7 @@ struct ShareModal: View {
         lines += ["🦮 WALKS"]
         let walkTimes = dog.walkTimesData.prefix(dog.walksPerDay).map { fmt.string(from: $0) }.joined(separator: " & ")
         let dur = dog.walkDurationMinutes == 60 ? "1hr+" : "\(dog.walkDurationMinutes)min"
-        lines += ["\(dog.walksPerDay) walk\(dog.walksPerDay == 1 ? "" : "s")/day\(walkTimes.isEmpty ? "" : " — \(walkTimes)"), \(dur) each"]
+        lines += ["\(dog.walksPerDay) walk\(dog.walksPerDay == 1 ? "" : "s")/day\(walkTimes.isEmpty ? "" : ", at \(walkTimes)"), \(dur) each"]
         if !dog.leashBehaviours.isEmpty {
             lines += ["Leash: \(dog.leashBehaviours.joined(separator: ", "))"]
         }
@@ -266,7 +282,7 @@ struct ShareModal: View {
         if !dog.medications.isEmpty {
             lines += ["💊 MEDICATIONS"]
             for m in dog.medications {
-                lines += ["\(m.name) — \(m.dose), \(m.timing.lowercased()), \(m.method.lowercased())"]
+                lines += ["\(m.name): \(m.dose), \(m.timing.lowercased()), \(m.method.lowercased())"]
             }
             lines += [""]
         }
@@ -290,7 +306,7 @@ struct ShareModal: View {
         }
 
         // Overnight
-        if mode == .overnight {
+        if mode == .overnight || mode == .both {
             lines += ["🌙 BEDTIME"]
             lines += ["Sleeps: \(dog.sleepLocation)"]
             lines += ["Bedtime: \(fmt.string(from: dog.bedtimeDate))"]
@@ -339,13 +355,13 @@ struct CareGuidePrintView: View {
                 }
                 VStack(alignment: .leading, spacing: 3) {
                     Text("\(dog.name)'s Care Guide")
-                        .font(.system(size: 22, weight: .bold))
+                        .font(.jakarta(22, weight: .bold))
                         .foregroundColor(.snootBrown)
                     Text("\(dog.breed)  ·  \(dog.age)  ·  \(Int(dog.weightLbs)) lbs")
-                        .font(.system(size: 13))
+                        .font(.jakarta(13))
                         .foregroundColor(.snootText2)
                     Text(isOvernight ? "Daytime + Overnight" : "Daytime care")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.jakarta(12, weight: .semibold))
                         .foregroundColor(.snootSage)
                 }
                 Spacer()
@@ -417,7 +433,7 @@ struct CareGuidePrintView: View {
                         printRow("Vet", parts.joined(separator: " · "))
                     }
                     if dog.emergencyContact.isEmpty && dog.vetPhone.isEmpty {
-                        Text("No contacts added").font(.system(size: 13)).foregroundColor(.snootText2)
+                        Text("No contacts added").font(.jakarta(13)).foregroundColor(.snootText2)
                     }
                 }
             }
@@ -431,8 +447,8 @@ struct CareGuidePrintView: View {
     private func printSection<Content: View>(emoji: String, title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 6) {
-                Text(emoji).font(.system(size: 13))
-                Text(title).font(.system(size: 14, weight: .bold)).foregroundColor(.snootBrown)
+                Text(emoji).font(.jakarta(13))
+                Text(title).font(.jakarta(14, weight: .bold)).foregroundColor(.snootBrown)
             }
             content()
         }
@@ -446,11 +462,11 @@ struct CareGuidePrintView: View {
     private func printRow(_ label: String, _ value: String, highlight: Bool = false) -> some View {
         HStack(alignment: .top, spacing: 8) {
             Text(label)
-                .font(.system(size: 12, weight: .semibold))
+                .font(.jakarta(12, weight: .semibold))
                 .foregroundColor(.snootText2)
                 .frame(width: 80, alignment: .leading)
             Text(value)
-                .font(.system(size: 13))
+                .font(.jakarta(13))
                 .foregroundColor(highlight ? Color(red: 0.75, green: 0.15, blue: 0.1) : .snootBrown)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }

@@ -3,8 +3,10 @@ import SwiftUI
 struct SitterLinksView: View {
     let dog: Dog
     @Environment(AuthService.self) private var auth
+    @Environment(SubscriptionService.self) private var subscriptionService
     @State private var links: [SitterLink] = []
     @State private var showCreate = false
+    @State private var showPaywall = false
     @State private var isLoading = false
     @State private var errorMessage: String?
 
@@ -13,18 +15,46 @@ struct SitterLinksView: View {
             Section {
                 if isLoading {
                     HStack { Spacer(); ProgressView(); Spacer() }
-                } else if links.isEmpty {
+                } else if !subscriptionService.isPro && dog.canEdit {
+                    // Pro gate — user can edit but doesn't have Pro
+                    VStack(spacing: 16) {
+                        Image(systemName: "lock.circle.fill")
+                            .font(.jakarta(40))
+                            .foregroundColor(.snootOrange.opacity(0.7))
+                        Text("Sitter links are a Pro feature")
+                            .font(.jakarta(15, weight: .semibold))
+                            .foregroundColor(.snootBrown)
+                        Text("Upgrade to Snoot Pro to create shareable care guide links for your sitter.")
+                            .font(.jakarta(13))
+                            .foregroundColor(.snootText2)
+                            .multilineTextAlignment(.center)
+                        Button {
+                            showPaywall = true
+                        } label: {
+                            Text("Upgrade to Pro")
+                                .font(.jakarta(14, weight: .semibold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 10)
+                                .background(Color.snootOrange)
+                                .clipShape(Capsule())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.vertical, 20)
+                    .frame(maxWidth: .infinity)
+                } else if links.filter({ $0.active }).isEmpty {
                     VStack(spacing: 12) {
                         Image(systemName: "link.badge.plus")
-                            .font(.system(size: 36))
+                            .font(.jakarta(36))
                             .foregroundColor(.snootOrange.opacity(0.6))
                         Text("No active links yet")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.jakarta(15, weight: .semibold))
                             .foregroundColor(.snootBrown)
                         Text(dog.canEdit
-                             ? "Create a sitter link to share \(dog.name)'s care guide with anyone — no app required."
+                             ? "Create a sitter link to share \(dog.name)'s care guide with anyone. No app required."
                              : "No sitter links have been created yet.")
-                            .font(.system(size: 13))
+                            .font(.jakarta(13))
                             .foregroundColor(.snootText2)
                             .multilineTextAlignment(.center)
                     }
@@ -39,7 +69,19 @@ struct SitterLinksView: View {
                     }
                 }
             } header: {
-                SectionHeader(title: "Active links")
+                HStack {
+                    SectionHeader(title: "Active links")
+                    Spacer()
+                    if !subscriptionService.isPro {
+                        Text("PRO")
+                            .font(.jakarta(10, weight: .bold))
+                            .foregroundColor(.snootOrange)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 3)
+                            .background(Color.snootOrange.opacity(0.12))
+                            .clipShape(Capsule())
+                    }
+                }
             }
 
         }
@@ -52,7 +94,11 @@ struct SitterLinksView: View {
             ToolbarItem(placement: .primaryAction) {
                 if dog.canEdit {
                     Button {
-                        showCreate = true
+                        if subscriptionService.isPro {
+                            showCreate = true
+                        } else {
+                            showPaywall = true
+                        }
                     } label: {
                         Image(systemName: "plus.circle.fill")
                             .foregroundColor(.snootOrange)
@@ -63,6 +109,9 @@ struct SitterLinksView: View {
         }
         .sheet(isPresented: $showCreate, onDismiss: { Task { await loadLinks() } }) {
             CreateLinkView(dog: dog)
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView(isPresented: $showPaywall)
         }
         .task { await loadLinks() }
         .alert("Error", isPresented: .init(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
@@ -130,7 +179,7 @@ struct ActiveLinkRow: View {
                         Image(systemName: "square.and.arrow.up")
                         Text("Share")
                     }
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.jakarta(13, weight: .semibold))
                         .lineLimit(1)
                         .fixedSize()
                         .foregroundColor(.white)
@@ -149,7 +198,7 @@ struct ActiveLinkRow: View {
                         Image(systemName: "doc.on.doc")
                         Text("Copy")
                     }
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.jakarta(13, weight: .semibold))
                         .lineLimit(1)
                         .fixedSize()
                         .foregroundColor(.snootOrange)
@@ -166,7 +215,7 @@ struct ActiveLinkRow: View {
                         showDeactivateAlert = true
                     } label: {
                         Text("Deactivate")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.jakarta(13, weight: .semibold))
                             .foregroundColor(.red)
                     }
                     .buttonStyle(.borderless)
@@ -191,7 +240,7 @@ struct ActiveLinkRow: View {
         let color: Color = link.mode == "overnight" ? Color(red: 0.4, green: 0.3, blue: 0.7) : .snootSage
         let label = link.mode == "both" ? "Daytime + Overnight" : link.mode.capitalized
         return Text(label)
-            .font(.system(size: 12, weight: .semibold))
+            .font(.jakarta(12, weight: .semibold))
             .foregroundColor(color)
             .padding(.horizontal, 10).padding(.vertical, 4)
             .background(color.opacity(0.12))
@@ -202,11 +251,11 @@ struct ActiveLinkRow: View {
         Group {
             if let exp = link.expiresAtDate {
                 Text("Expires \(exp.formatted(.relative(presentation: .named)))")
-                    .font(.system(size: 11))
+                    .font(.jakarta(11))
                     .foregroundColor(.snootText2)
             } else {
                 Text("No expiry")
-                    .font(.system(size: 11))
+                    .font(.jakarta(11))
                     .foregroundColor(.snootText2)
             }
         }

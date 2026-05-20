@@ -40,7 +40,7 @@ struct TagChipView: View {
     var body: some View {
         Button(action: action) {
             Text(tag)
-                .font(.system(size: 14, weight: .medium))
+                .font(.jakarta(14, weight: .medium))
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
                 .background(isSelected ? Color.snootOrange : Color.snootDivider)
@@ -79,7 +79,7 @@ struct TagChipGrid: View {
         if let customTag, let onAddCustom {
             HStack(spacing: 8) {
                 HighContrastTextField(placeholder: "Add custom…", text: customTag)
-                    .font(.system(size: 14))
+                    .font(.jakarta(14))
                     .foregroundColor(.snootText1)
                     .padding(.vertical, 10)
                     .padding(.horizontal, 12)

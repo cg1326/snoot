@@ -14,6 +14,7 @@ interface DogData {
   weight_lbs?: number;
   photo_url?: string;
   bio?: string;
+  gender?: string;
   personality_tags?: string[];
 }
 
@@ -110,7 +111,7 @@ export default function App() {
       })
         .then(res => res.ok ? res.json() : null)
         .then(json => { if (json && !json.error && json.dog && json.careMap) setData(json); })
-        .catch(() => {});
+        .catch(() => { });
     };
     document.addEventListener('visibilitychange', refresh);
     return () => document.removeEventListener('visibilitychange', refresh);
@@ -212,15 +213,15 @@ export default function App() {
             <>
               <h1>Welcome to the Family!</h1>
               <p className="subtitle">Set a password to access your shared dog profiles in the Snoot app.</p>
-              
+
               <form onSubmit={handleSetPassword} className="mt-6 text-left">
                 <div className="form-group">
                   <label htmlFor="password">Choose a password</label>
-                  <input 
-                    type="password" 
-                    id="password" 
-                    placeholder="Min 6 characters" 
-                    required 
+                  <input
+                    type="password"
+                    id="password"
+                    placeholder="Min 6 characters"
+                    required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
@@ -254,7 +255,7 @@ export default function App() {
 
   const mode = link.mode;
   const showOvernight = mode === "overnight" || mode === "both";
-  
+
   const mealTimes = feeding.meal_times_data || [];
   const walkTimes = walks.walk_times_data || [];
   const fearTriggers = behaviour.fear_triggers || [];
@@ -270,7 +271,7 @@ export default function App() {
         <div className="card text-center">
           <div className="paw-icon">🐶</div>
           <h1>{dog.name} is lucky to have you</h1>
-          <p className="subtitle">Your visit has been logged and the owner has been notified.</p>
+          <p className="subtitle">Your visit has been logged.</p>
           <button className="btn-primary" onClick={() => setSubmitted(false)}>Back to care guide</button>
         </div>
       </div>
@@ -288,12 +289,12 @@ export default function App() {
         )}
         <h1 className="dog-name">{dog.name}'s Care Guide</h1>
         <div className="dog-meta">
-          {dog.breed || ''}{dog.dob ? ` · ${calcAge(dog.dob)}` : ''}
+          {dog.breed || ''}{dog.dob ? ` · ${calcAge(dog.dob)}` : ''}{dog.gender ? ` · ${dog.gender}` : ''}
         </div>
         <div className="mode-badge">
           {mode === "both" ? "Daytime + Overnight" : mode === "overnight" ? "Overnight" : "Daytime"} care
         </div>
-        
+
         {personalityTags.length > 0 && (
           <div className="tags">
             {personalityTags.slice(0, 5).map((t, i) => (
@@ -301,9 +302,53 @@ export default function App() {
             ))}
           </div>
         )}
-        
+
         {dog.bio && <p className="dog-bio">{dog.bio}</p>}
       </div>
+
+      {/* First 24 hours — overnight/both only, above Mealtime */}
+      {showOvernight && (() => {
+        const bullets: string[] = [];
+        if (personalityTags.length > 0) {
+          const top = personalityTags.slice(0, 2).join(' and ').toLowerCase();
+          bullets.push(`${dog.name} is ${top} — give ${dog.name} a few minutes to sniff around and settle in.`);
+        }
+        if (feeding.meals_per_day > 0 && mealTimes.length > 0) {
+          const t = fmtTime(mealTimes[0]);
+          const food = feeding.food_brand ? feeding.food_brand : `${dog.name}'s regular food`;
+          const portion = feeding.portion_size ? ` — ${feeding.portion_size} ${feeding.portion_unit || ''} of ${food}` : '';
+          bullets.push(`First meal is at ${t}${portion}.`);
+        }
+        if (walks.walks_per_day > 0 && walkTimes.length > 0) {
+          const t = fmtTime(walkTimes[0]);
+          const dur = walks.walk_duration_minutes === 60 ? '1hr+' : `${walks.walk_duration_minutes || '?'} min`;
+          bullets.push(`First walk is around ${t} (${dur}).`);
+        }
+        if (behaviour.comfort_items) {
+          const comfort = behaviour.comfort_items.charAt(0).toLowerCase() + behaviour.comfort_items.slice(1);
+          bullets.push(`If ${dog.name} seems unsettled, ${dog.name}'s comfort items are: ${comfort}.`);
+        } else if (behaviour.separation_anxiety === 'Moderate' || behaviour.separation_anxiety === 'Severe') {
+          const note = behaviour.separation_anxiety_notes ? ` — ${behaviour.separation_anxiety_notes}` : '';
+          bullets.push(`${dog.name} can get anxious when left alone${note}.`);
+        }
+        if (bullets.length < 3) {
+          bullets.push(`When in doubt, give ${dog.name} a treat and a belly rub. Works every time.`);
+        }
+        return (
+          <div className="section">
+            <div className="section-header">
+              <div className="section-icon icon-green">⭐</div>
+              <h2>First 24 hours with {dog.name}</h2>
+            </div>
+            {bullets.slice(0, 4).map((bullet, i) => (
+              <div key={i} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', marginBottom: '6px' }}>
+                <span style={{ color: '#7daf7a', flexShrink: 0 }}>•</span>
+                <span style={{ fontSize: '14px', color: '#503728', lineHeight: '1.5' }}>{bullet}</span>
+              </div>
+            ))}
+          </div>
+        );
+      })()}
 
       {/* Feeding */}
       <div className="section">
@@ -311,7 +356,7 @@ export default function App() {
           <div className="section-icon icon-orange">🍖</div>
           <h2 className="section-title">Mealtime</h2>
         </div>
-        
+
         {feeding.meals_per_day === 0 ? (
           <div className="info-row"><div className="info-value">Free feed all day</div></div>
         ) : (
@@ -322,7 +367,7 @@ export default function App() {
             ))}
           </>
         )}
-        
+
         {feeding.portion_size && <div className="info-row"><div className="info-label">Portion</div><div className="info-value">{feeding.portion_size} {feeding.portion_unit || ''}</div></div>}
         {feeding.food_brand && <div className="info-row"><div className="info-label">Food</div><div className="info-value">{feeding.food_brand}</div></div>}
         {foodAllergies.length > 0 && <div className="info-row"><div className="info-label">Avoid</div><div className="info-value highlight">{foodAllergies.join(", ")}</div></div>}
@@ -335,7 +380,7 @@ export default function App() {
           <div className="section-icon icon-green">🦮</div>
           <h2 className="section-title">Walks</h2>
         </div>
-        
+
         <div className="info-row"><div className="info-label">Walks/day</div><div className="info-value">{walks.walks_per_day || 0}</div></div>
         {walkTimes.map((t: string, i: number) => (
           <div key={i} className="info-row">
@@ -358,7 +403,7 @@ export default function App() {
           {medications.map((m: any, i: number) => (
             <div key={i} className={i > 0 ? "med-item med-divider" : "med-item"}>
               <div className="med-name">{m.name}</div>
-              <div className="med-details">{m.dose} · {m.timing} · {m.method}</div>
+              <div className="med-details">{[m.dose, m.timing, m.method].filter(Boolean).join(' · ')}</div>
             </div>
           ))}
         </div>
@@ -380,6 +425,18 @@ export default function App() {
           )}
           {behaviour.potty_signal && <div className="info-row"><div className="info-label">Potty signal</div><div className="info-value">{behaviour.potty_signal}</div></div>}
           {behaviour.comfort_items && <div className="info-row"><div className="info-label">Comfort items</div><div className="info-value">{behaviour.comfort_items}</div></div>}
+        </div>
+      )}
+
+      {/* Health conditions */}
+      {health.has_health_conditions && (health.health_conditions || health.warning_signs) && (
+        <div className="section">
+          <div className="section-header">
+            <div className="section-icon icon-red">🏥</div>
+            <h2 className="section-title">Health</h2>
+          </div>
+          {health.health_conditions && <div className="info-row"><div className="info-label">Conditions</div><div className="info-value highlight">{health.health_conditions}</div></div>}
+          {health.warning_signs && <div className="info-row"><div className="info-label">Warning signs</div><div className="info-value highlight">{health.warning_signs}</div></div>}
         </div>
       )}
 
@@ -422,11 +479,11 @@ export default function App() {
         <form onSubmit={handleLogVisit}>
           <div className="form-group">
             <label htmlFor="sitter_name">Your name</label>
-            <input 
-              type="text" 
-              id="sitter_name" 
-              placeholder="e.g. Alex" 
-              required 
+            <input
+              type="text"
+              id="sitter_name"
+              placeholder="e.g. Alex"
+              required
               value={sitterName}
               onChange={(e) => setSitterName(e.target.value)}
             />
@@ -453,9 +510,9 @@ export default function App() {
               <label>Walk duration</label>
               <div className="duration-opts">
                 {[15, 30, 45, 60].map(d => (
-                  <button 
+                  <button
                     key={d}
-                    type="button" 
+                    type="button"
                     className={`dur-btn ${walkDuration === d ? 'selected' : ''}`}
                     onClick={() => setWalkDuration(d)}
                   >
@@ -468,8 +525,8 @@ export default function App() {
 
           <div className="form-group mt-4">
             <label htmlFor="notes">Notes <span className="font-normal text-gray">(optional)</span></label>
-            <textarea 
-              id="notes" 
+            <textarea
+              id="notes"
               placeholder="Anything the owner should know?"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}

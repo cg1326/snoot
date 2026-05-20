@@ -76,13 +76,13 @@ struct CreateLinkView: View {
             // Illustration
             VStack(spacing: 8) {
                 Image(systemName: "link.circle.fill")
-                    .font(.system(size: 56))
+                    .font(.jakarta(56))
                     .foregroundColor(Color.snootOrange)
                 Text("Share \(dog.name)'s care guide")
-                    .font(.system(size: 20, weight: .bold))
+                    .font(.jakarta(20, weight: .bold))
                     .foregroundColor(Color.snootBrown)
-                Text("Anyone with the link can view the guide — no app required.")
-                    .font(.system(size: 14))
+                Text("Anyone with the link can view the guide. No app required.")
+                    .font(.jakarta(14))
                     .foregroundColor(.snootText2)
                     .multilineTextAlignment(.center)
             }
@@ -91,7 +91,7 @@ struct CreateLinkView: View {
             // Mode picker
             VStack(alignment: .leading, spacing: 8) {
                 Text("Care mode")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.jakarta(14, weight: .semibold))
                     .foregroundColor(.snootText2)
                 Picker("Mode", selection: $mode) {
                     ForEach(LinkMode.allCases, id: \.self) { Text($0.rawValue).tag($0) }
@@ -106,7 +106,7 @@ struct CreateLinkView: View {
             // Expiry picker
             VStack(alignment: .leading, spacing: 8) {
                 Text("Link expiry")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.jakarta(14, weight: .semibold))
                     .foregroundColor(.snootText2)
                 ForEach(ExpiryOption.allCases, id: \.self) { option in
                     Button {
@@ -114,7 +114,7 @@ struct CreateLinkView: View {
                     } label: {
                         HStack {
                             Text(option.rawValue)
-                                .font(.system(size: 16))
+                                .font(.jakarta(16))
                                 .foregroundColor(Color.snootBrown)
                             Spacer()
                             if expiry == option {
@@ -139,7 +139,7 @@ struct CreateLinkView: View {
 
             if let err = errorMessage {
                 Text(err)
-                    .font(.system(size: 14))
+                    .font(.jakarta(14))
                     .foregroundColor(.red)
                     .multilineTextAlignment(.center)
             }
@@ -153,7 +153,7 @@ struct CreateLinkView: View {
                         ProgressView().tint(.white)
                     } else {
                         Text("Create link")
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(.jakarta(17, weight: .semibold))
                             .foregroundColor(.white)
                     }
                 }
@@ -170,10 +170,10 @@ struct CreateLinkView: View {
         VStack(spacing: 20) {
             VStack(spacing: 8) {
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 56))
+                    .font(.jakarta(56))
                     .foregroundColor(Color.snootSage)
                 Text("Link created!")
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.jakarta(22, weight: .bold))
                     .foregroundColor(Color.snootBrown)
             }
             .padding(.top, 8)
@@ -194,7 +194,7 @@ struct CreateLinkView: View {
                         UIPasteboard.general.url = url
                     } label: {
                         Label("Copy link", systemImage: "doc.on.doc")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.jakarta(15, weight: .semibold))
                             .foregroundColor(Color.snootOrange)
                             .frame(maxWidth: .infinity).padding(.vertical, 14)
                             .background(Color.snootOrange.opacity(0.1))
@@ -211,7 +211,7 @@ struct CreateLinkView: View {
                 showShareSheet = true
             } label: {
                 Label("Share via iMessage / Email", systemImage: "square.and.arrow.up")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.jakarta(17, weight: .semibold))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity).padding(.vertical, 16)
                     .background(Color.snootOrange)
@@ -219,7 +219,7 @@ struct CreateLinkView: View {
             }
 
             Button("Done") { dismiss() }
-                .font(.system(size: 16, weight: .semibold))
+                .font(.jakarta(16, weight: .semibold))
                 .foregroundColor(Color.snootOrange)
         }
         .sheet(isPresented: $showShareSheet) {

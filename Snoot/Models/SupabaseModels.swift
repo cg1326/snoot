@@ -25,15 +25,18 @@ struct SupabaseDog: Codable, Identifiable {
     var breed: String
     var dob: String?       // ISO date "YYYY-MM-DD"
     var weightLbs: Double?
+    var gender: String?
+    var personalityTags: [String]?
     var photoUrl: String?
     var bio: String
     let createdAt: String?
     let updatedAt: String?
 
     var user: SupabaseUser?
-    
+
     enum CodingKeys: String, CodingKey {
-        case id, name, breed, dob, bio
+        case id, name, breed, dob, bio, gender
+        case personalityTags = "personality_tags"
         case ownerId   = "owner_id"
         case weightLbs = "weight_lbs"
         case photoUrl  = "photo_url"

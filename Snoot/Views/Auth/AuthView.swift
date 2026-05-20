@@ -21,15 +21,15 @@ struct AuthView: View {
                     // Branding
                     VStack(spacing: 8) {
                         Image(systemName: "pawprint.circle.fill")
-                            .font(.system(size: 64))
+                            .font(.jakarta(64))
                             .foregroundColor(.snootOrange)
                         Text(mode == .signIn ? "Welcome back" : "Create your account")
-                            .font(.system(size: 26, weight: .bold))
+                            .font(.jakarta(26, weight: .bold))
                             .foregroundColor(.snootBrown)
                         Text(mode == .signIn
                              ? "Sign in to sync your dogs and share care guides"
                              : "Unlock live links, visit logs, and family sharing")
-                            .font(.system(size: 15))
+                            .font(.jakarta(15))
                             .foregroundColor(.snootText2)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal)
@@ -52,10 +52,10 @@ struct AuthView: View {
                     if awaitingEmailConfirmation {
                         VStack(spacing: 6) {
                             Label("Check your email", systemImage: "envelope.badge")
-                                .font(.system(size: 15, weight: .semibold))
+                                .font(.jakarta(15, weight: .semibold))
                                 .foregroundColor(.snootBrown)
                             Text("We sent a confirmation link to \(email). Tap it, then come back and sign in.")
-                                .font(.system(size: 13))
+                                .font(.jakarta(13))
                                 .foregroundColor(.snootText2)
                                 .multilineTextAlignment(.center)
                         }
@@ -69,7 +69,7 @@ struct AuthView: View {
                     // Error
                     if let err = auth.errorMessage {
                         Text(err)
-                            .font(.system(size: 14))
+                            .font(.jakarta(14))
                             .foregroundColor(.red)
                             .multilineTextAlignment(.center)
                             .padding(12)
@@ -103,7 +103,7 @@ struct AuthView: View {
                                 ProgressView().tint(.white)
                             } else {
                                 Text(mode == .signIn ? "Sign in" : "Create account")
-                                    .font(.system(size: 17, weight: .semibold))
+                                    .font(.jakarta(17, weight: .bold))
                                     .foregroundColor(.white)
                             }
                         }
@@ -117,7 +117,7 @@ struct AuthView: View {
                     // Divider
                     HStack {
                         Rectangle().frame(height: 1).foregroundColor(.secondary.opacity(0.2))
-                        Text("or").font(.system(size: 14)).foregroundColor(.snootText2)
+                        Text("or").font(.jakarta(14)).foregroundColor(.snootText2)
                         Rectangle().frame(height: 1).foregroundColor(.secondary.opacity(0.2))
                     }
                     .padding(.horizontal)
@@ -135,7 +135,7 @@ struct AuthView: View {
                         }
                     } label: {
                         Text(mode == .signIn ? "Don't have an account? Sign up" : "Already have an account? Sign in")
-                            .font(.system(size: 15))
+                            .font(.jakarta(15))
                             .foregroundColor(.snootOrange)
                     }
                     .padding(.bottom, 32)

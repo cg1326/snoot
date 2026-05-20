@@ -67,7 +67,7 @@ struct SquareCropView: View {
                 Spacer()
                 
                 Text("Pinch to zoom · Drag to position")
-                    .font(.system(size: 14))
+                    .font(.jakarta(14))
                     .foregroundColor(.snootText2)
                     .padding(.bottom, 40)
             }

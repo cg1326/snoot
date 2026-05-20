@@ -3,6 +3,7 @@ import SwiftData
 
 struct SettingsView: View {
     @Environment(AuthService.self) private var auth
+    @Environment(SubscriptionService.self) private var subscriptionService
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @Query private var dogs: [Dog]
@@ -11,26 +12,70 @@ struct SettingsView: View {
     @State private var showPasswordChange = false
     @State private var newPassword = ""
     @State private var confirmPassword = ""
-    @State private var notificationsEnabled = true
+    @State private var notificationsEnabled = UserDefaults.standard.object(forKey: "notificationsEnabled") as? Bool ?? true
     @State private var showDeleteAccount = false
     @State private var showSignOutConfirm = false
     @State private var isSavingName = false
     @State private var nameSaved = false
     @State private var toastMessage: String?
+    @State private var showPaywall = false
 
     var body: some View {
         List {
+            // MARK: - Snoot Pro
+            Section("Snoot Pro") {
+                if subscriptionService.isPro {
+                    HStack {
+                        Label("Snoot Pro: Active", systemImage: "checkmark.seal.fill")
+                            .foregroundColor(.snootSage)
+                            .font(.jakarta(15, weight: .semibold))
+                        Spacer()
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.snootSage)
+                    }
+                    Button("Manage subscription") {
+                        if let url = URL(string: "https://apps.apple.com/account/subscriptions") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    .foregroundColor(.snootOrange)
+                } else {
+                    HStack {
+                        Label("Free plan", systemImage: "circle")
+                            .foregroundColor(.snootText2)
+                            .font(.jakarta(15))
+                        Spacer()
+                    }
+                    Button("Upgrade to Pro · $3.99/mo") {
+                        showPaywall = true
+                    }
+                    .foregroundColor(.snootOrange)
+                    .font(.jakarta(15, weight: .semibold))
+                }
+                Button("Restore purchases") {
+                    Task {
+                        do {
+                            try await subscriptionService.restorePurchases()
+                            toast(subscriptionService.isPro ? "Snoot Pro restored ✓" : "No purchases found for this Apple ID.")
+                        } catch {
+                            toast("Restore failed: \(error.localizedDescription)")
+                        }
+                    }
+                }
+                .foregroundColor(.snootText2)
+            }
+
             // MARK: - Account
             Section("Account") {
                 if auth.isAuthenticated {
                     // Display name
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Display name")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.jakarta(12, weight: .semibold))
                             .foregroundColor(.snootText2)
                         HStack {
                             HighContrastTextField(placeholder: "Your name", text: $displayName)
-                                .font(.system(size: 16))
+                                .font(.jakarta(16))
                                 .onSubmit { Task { await saveName() } }
                             if isSavingName {
                                 ProgressView().scaleEffect(0.8)
@@ -64,12 +109,13 @@ struct SettingsView: View {
                 Toggle("Visit log alerts", isOn: $notificationsEnabled)
                     .tint(.snootOrange)
                     .onChange(of: notificationsEnabled) { _, enabled in
+                        UserDefaults.standard.set(enabled, forKey: "notificationsEnabled")
                         if enabled {
                             VisitHistoryView.requestNotificationPermission()
                         }
                     }
                 Text("Get notified when a sitter logs a visit.")
-                    .font(.system(size: 12))
+                    .font(.jakarta(12))
                     .foregroundColor(.snootText2)
             }
 
@@ -123,11 +169,15 @@ struct SettingsView: View {
         } message: {
             Text("This will permanently delete your account. Your local dog profiles will remain on this device.")
         }
+        // Paywall sheet
+        .sheet(isPresented: $showPaywall) {
+            PaywallView(isPresented: $showPaywall)
+        }
         // Toast overlay
         .overlay(alignment: .bottom) {
             if let msg = toastMessage {
                 Text(msg)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.jakarta(14, weight: .medium))
                     .foregroundColor(.white)
                     .padding(.horizontal, 16).padding(.vertical, 10)
                     .background(Color.snootBrown.opacity(0.9))
@@ -147,7 +197,7 @@ struct SettingsView: View {
 
                 if newPassword != confirmPassword && !confirmPassword.isEmpty {
                     Text("Passwords don't match")
-                        .font(.system(size: 13))
+                        .font(.jakarta(13))
                         .foregroundColor(.red)
                 }
 
@@ -158,7 +208,7 @@ struct SettingsView: View {
                         toast("Password updated")
                     }
                 }
-                .font(.system(size: 17, weight: .semibold))
+                .font(.jakarta(17, weight: .semibold))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity).padding(.vertical, 16)
                 .background(Color.snootOrange)

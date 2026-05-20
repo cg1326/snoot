@@ -13,7 +13,7 @@ struct Step3BioView: View {
             title: "A word from \(vm.name.isEmpty ? "the pup" : vm.name)",
             subtitle: "Write a quick note in their own voice. Totally optional.",
             vm: vm,
-            skipLabel: "Skip — add later",
+            skipLabel: "Skip for now",
             onSkip: { vm.skip() }
         ) {
             ZStack(alignment: .topLeading) {
@@ -21,11 +21,11 @@ struct Step3BioView: View {
                     Text(placeholder)
                         .foregroundColor(Color.snootText3)
                         .padding(14)
-                        .font(.system(size: 16))
+                        .font(.jakarta(16))
                         .allowsHitTesting(false)
                 }
                 TextEditor(text: $vm.bio)
-                    .font(.system(size: 16))
+                    .font(.jakarta(16))
                     .foregroundColor(.snootText1)
                     .padding(10)
                     .frame(minHeight: 160)

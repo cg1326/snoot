@@ -4,9 +4,11 @@ import Supabase
 struct FamilyAccessView: View {
     let dog: Dog
     @Environment(AuthService.self) private var auth
+    @Environment(SubscriptionService.self) private var subscriptionService
     @State private var owners: [DogOwner] = []
     @State private var isLoading = false
     @State private var showInvite = false
+    @State private var showPaywall = false
     @State private var errorMessage: String?
     @State private var inviteEmail = ""
     @State private var inviteRole = "editor"
@@ -18,7 +20,6 @@ struct FamilyAccessView: View {
 
     var allMembers: [DogOwner] {
         var list = owners
-        // If we have the original owner info, add them to the top if they aren't already there
         if let ownerId = dogOwnerId, !owners.contains(where: { $0.userId == ownerId }) {
             let owner = DogOwner(
                 id: "owner-\(ownerId)",
@@ -35,10 +36,14 @@ struct FamilyAccessView: View {
         return list
     }
 
+    private var acceptedMembers: [DogOwner] { allMembers.filter { $0.accepted } }
+    private var pendingMembers: [DogOwner]  { allMembers.filter { !$0.accepted } }
+
     var body: some View {
         List {
+            // MARK: - Members section
             Section {
-                ForEach(allMembers) { owner in
+                ForEach(acceptedMembers) { owner in
                     FamilyMemberRow(
                         owner: owner,
                         isCurrentUser: owner.userId == auth.currentUser?.id,
@@ -48,16 +53,66 @@ struct FamilyAccessView: View {
                     )
                 }
             } header: {
-                SectionHeader(title: "Family members")
+                SectionHeader(title: "\(dog.name)'s people")
             } footer: {
                 if !dog.canEdit {
                     Text("You have view-only access to this family.")
-                        .font(.system(size: 12))
+                        .font(.jakarta(12))
                         .foregroundColor(.snootOrange)
                 } else {
                     Text("Editors can update all care sections. Viewers can only read the profile.")
-                        .font(.system(size: 12))
+                        .font(.jakarta(12))
                         .foregroundColor(.snootText2)
+                }
+            }
+
+            // MARK: - Pending section (hidden when empty)
+            if !pendingMembers.isEmpty {
+                Section {
+                    ForEach(pendingMembers) { owner in
+                        FamilyMemberRow(
+                            owner: owner,
+                            isCurrentUser: false,
+                            canManage: dog.canEdit,
+                            onRemove: { await removeMember(owner) },
+                            onRoleChange: { newRole in await updateRole(owner, role: newRole) }
+                        )
+                    }
+                } header: {
+                    SectionHeader(title: "Pending")
+                }
+            }
+
+            // MARK: - Invite CTA (owners/editors only)
+            if dog.canEdit {
+                Section {
+                    Button {
+                        if subscriptionService.isPro { showInvite = true }
+                        else { showPaywall = true }
+                    } label: {
+                        HStack(spacing: 10) {
+                            Spacer()
+                            Image(systemName: "person.badge.plus")
+                            Text("Invite someone new")
+                            if !subscriptionService.isPro {
+                                Image(systemName: "lock.fill")
+                                    .font(.jakarta(11))
+                            }
+                            Spacer()
+                        }
+                        .font(.jakarta(15, weight: .semibold))
+                        .foregroundColor(.snootOrange)
+                        .padding(.vertical, 14)
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .strokeBorder(Color.snootOrange, style: StrokeStyle(lineWidth: 1.5, dash: [6]))
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
                 }
             }
         }
@@ -66,20 +121,11 @@ struct FamilyAccessView: View {
         .background(Color.snootCream.ignoresSafeArea())
         .navigationTitle("Family access")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                if dog.canEdit {
-                    Button {
-                        showInvite = true
-                    } label: {
-                        Image(systemName: "person.badge.plus")
-                            .foregroundColor(.snootOrange)
-                    }
-                }
-            }
-        }
         .sheet(isPresented: $showInvite) {
             inviteSheet
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView(isPresented: $showPaywall)
         }
         .task { await loadOwners() }
         .alert("Error", isPresented: .init(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
@@ -93,13 +139,13 @@ struct FamilyAccessView: View {
                 VStack(spacing: 20) {
                     VStack(spacing: 8) {
                         Image(systemName: "person.2.circle.fill")
-                            .font(.system(size: 52))
+                            .font(.jakarta(52))
                             .foregroundColor(.snootOrange)
                         Text("Invite someone")
-                            .font(.system(size: 22, weight: .bold))
+                            .font(.jakarta(22, weight: .bold))
                             .foregroundColor(.snootBrown)
-                        Text("Share the app with them — they'll see \(dog.name)'s profile when they sign in with this email.")
-                            .font(.system(size: 14))
+                        Text("Share the app with them. They'll see \(dog.name)'s profile when they sign in with this email.")
+                            .font(.jakarta(14))
                             .foregroundColor(.snootText2)
                             .multilineTextAlignment(.center)
                     }
@@ -109,7 +155,7 @@ struct FamilyAccessView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "checkmark.circle.fill").foregroundColor(.snootSage)
                             Text("Invite sent to \(inviteEmail)")
-                                .font(.system(size: 15, weight: .medium))
+                                .font(.jakarta(15, weight: .medium))
                                 .foregroundColor(.snootBrown)
                         }
                         .padding()
@@ -124,7 +170,7 @@ struct FamilyAccessView: View {
 
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Role")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(.jakarta(14, weight: .semibold))
                                     .foregroundColor(.snootText2)
                                 Picker("Role", selection: $inviteRole) {
                                     Text("Editor").tag("editor")
@@ -144,7 +190,7 @@ struct FamilyAccessView: View {
                                         ProgressView().tint(.white)
                                     } else {
                                         Text("Send invite")
-                                            .font(.system(size: 17, weight: .semibold))
+                                            .font(.jakarta(17, weight: .semibold))
                                             .foregroundColor(.white)
                                     }
                                 }
@@ -174,20 +220,16 @@ struct FamilyAccessView: View {
         }
     }
 
-    // MARK: - Actions
+    // MARK: - Actions (unchanged)
     private func loadOwners() async {
         guard let dogId = dog.supabaseId, auth.isAuthenticated else { return }
         isLoading = true
         defer { isLoading = false }
-        // Reset to avoid showing stale members while reloading
         owners = []
-        // Accept any pending invites before loading so the current user's status is fresh
         if let user = auth.currentUser {
             await SyncService.shared.acceptPendingInvites(user: user)
         }
         do {
-            // Fetch the dog's own fields only — no users join so dogOwnerId is always
-            // set regardless of whether the users visibility policy covers this member role.
             let serverDog: SupabaseDog = try await SyncService.shared.supabase
                 .from("dogs")
                 .select("*")
@@ -196,7 +238,6 @@ struct FamilyAccessView: View {
                 .execute()
                 .value
 
-            // Best-effort: fetch the owner's profile separately.
             let ownerProfile: SupabaseUser? = try? await SyncService.shared.fetchUserProfile(userId: serverDog.ownerId)
 
             await MainActor.run {
@@ -205,12 +246,9 @@ struct FamilyAccessView: View {
                 self.dogOwnerName = ownerProfile?.displayName
             }
 
-            // Fetch invited members (no users join — avoids PostgREST array/object decode mismatch).
-            // Exclude any spurious row where the primary dog owner also appears in dog_owners.
             let fetchedOwners = try await SyncService.shared.fetchDogOwners(dogId: dogId)
             let filtered = fetchedOwners.filter { $0.userId != serverDog.ownerId }
 
-            // Enrich each member row with their user profile (best-effort per-row).
             var enriched: [DogOwner] = []
             for var owner in filtered {
                 if let uid = owner.userId {
@@ -269,24 +307,54 @@ struct FamilyMemberRow: View {
     let onRoleChange: (String) async -> Void
 
     @State private var showRemoveAlert = false
-    @State private var showRolePicker = false
+
+    // Derive a human-readable name from an email local-part (e.g. emma.w → Emma W).
+    private func nameFromEmail(_ email: String) -> String {
+        let local = email.components(separatedBy: "@").first ?? email
+        let tokens = local.components(separatedBy: CharacterSet(charactersIn: "._-")).filter { !$0.isEmpty }
+        guard !tokens.isEmpty else { return local }
+        return tokens.map { t in
+            guard let first = t.first else { return t }
+            return String(first).uppercased() + t.dropFirst().lowercased()
+        }.joined(separator: " ")
+    }
+
+    // For pending rows: prefer displayName if set, otherwise derive from email.
+    private var pendingDisplayName: String {
+        if let name = owner.user?.displayName, !name.isEmpty { return name }
+        let email = owner.invitedEmail ?? owner.user?.email ?? ""
+        return nameFromEmail(email)
+    }
 
     var displayName: String {
+        if !owner.accepted { return pendingDisplayName }
         let name = owner.user?.displayName ?? ""
         if !name.isEmpty { return name }
         return owner.invitedEmail ?? "Unknown"
     }
 
     var subtitle: String {
-        let email = owner.user?.email ?? owner.invitedEmail ?? ""
         if !owner.accepted {
-            return "Invite pending · \(email)"
+            return owner.invitedEmail ?? owner.user?.email ?? ""
         }
-        // If display name is the same as email, don't show it twice
-        if displayName.lowercased() == email.lowercased() {
-            return ""
-        }
+        let email = owner.user?.email ?? owner.invitedEmail ?? ""
+        if displayName.lowercased() == email.lowercased() { return "" }
         return email
+    }
+
+    // Up to 2 initials for pending rows; 1 for accepted.
+    private var initials: String {
+        if !owner.accepted {
+            let tokens = pendingDisplayName.split(separator: " ")
+            return tokens.prefix(2).compactMap { $0.first.map { String($0).uppercased() } }.joined()
+        }
+        return String(displayName.prefix(1)).uppercased()
+    }
+
+    private var avatarColor: Color {
+        if !owner.accepted { return Color.snootText2 }
+        let colors: [Color] = [.snootOrange, .snootSage, .purple, .blue, .pink]
+        return colors[abs(displayName.hashValue) % colors.count]
     }
 
     var body: some View {
@@ -294,21 +362,21 @@ struct FamilyMemberRow: View {
             // Avatar
             ZStack {
                 Circle()
-                    .fill(avatarColor.opacity(0.15))
+                    .fill(owner.accepted ? avatarColor.opacity(0.15) : Color.snootText2.opacity(0.15))
                     .frame(width: 40, height: 40)
-                Text(String(displayName.prefix(1)).uppercased())
-                    .font(.system(size: 16, weight: .bold))
+                Text(initials)
+                    .font(.jakarta(16, weight: .bold))
                     .foregroundColor(avatarColor)
             }
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(displayName)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(.jakarta(15, weight: .semibold))
                         .foregroundColor(.snootBrown)
                     if isCurrentUser {
                         Text("You")
-                            .font(.system(size: 11))
+                            .font(.jakarta(11))
                             .foregroundColor(.snootText2)
                             .padding(.horizontal, 6).padding(.vertical, 2)
                             .background(Color.snootText2.opacity(0.1))
@@ -317,14 +385,14 @@ struct FamilyMemberRow: View {
                 }
                 if !subtitle.isEmpty {
                     Text(subtitle)
-                        .font(.system(size: 12))
+                        .font(.jakarta(12))
                         .foregroundColor(.snootText2)
                         .lineLimit(1)
                 }
             }
             Spacer()
 
-            // Role badge (tappable for owner to change)
+            // Role badge (tappable for owner/editor to manage non-owner rows)
             if canManage && !isCurrentUser && owner.role != "owner" {
                 Menu {
                     Button("Editor") { Task { await onRoleChange("editor") } }
@@ -339,6 +407,7 @@ struct FamilyMemberRow: View {
             }
         }
         .padding(.vertical, 4)
+        .opacity(owner.accepted ? 1.0 : 0.85)
         .alert("Remove access?", isPresented: $showRemoveAlert) {
             Button("Remove", role: .destructive) { Task { await onRemove() } }
             Button("Cancel", role: .cancel) {}
@@ -350,16 +419,10 @@ struct FamilyMemberRow: View {
     private var roleBadge: some View {
         let color: Color = owner.role == "owner" ? .snootOrange : owner.role == "editor" ? .snootSage : .secondary
         return Text(owner.accepted ? owner.role.capitalized : "Pending")
-            .font(.system(size: 12, weight: .semibold))
+            .font(.jakarta(12, weight: .semibold))
             .foregroundColor(color)
             .padding(.horizontal, 8).padding(.vertical, 4)
             .background(color.opacity(0.12))
             .clipShape(Capsule())
-    }
-
-    private var avatarColor: Color {
-        let colors: [Color] = [.snootOrange, .snootSage, .purple, .blue, .pink]
-        let index = abs(displayName.hashValue) % colors.count
-        return colors[index]
     }
 }

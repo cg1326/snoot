@@ -73,6 +73,13 @@ final class AuthService: NSObject {
               let token = String(data: tokenData, encoding: .utf8)
         else { return }
 
+        // Apple provides the full name only on the very first authorization.
+        let displayName: String? = {
+            let name = appleIDCredential.fullName
+            let parts = [name?.givenName, name?.familyName].compactMap { $0 }.filter { !$0.isEmpty }
+            return parts.isEmpty ? nil : parts.joined(separator: " ")
+        }()
+
         await MainActor.run { isLoading = true }
 
         do {
@@ -83,7 +90,7 @@ final class AuthService: NSObject {
                     nonce: nonceCleartext
                 )
             )
-            await fetchOrCreateUserProfile(id: session.user.id.uuidString, email: session.user.email ?? "")
+            await fetchOrCreateUserProfile(id: session.user.id.uuidString, email: session.user.email ?? "", displayName: displayName)
         } catch {
             await MainActor.run { errorMessage = error.localizedDescription }
         }
@@ -121,6 +128,29 @@ final class AuthService: NSObject {
         }
     }
 
+    // MARK: - Device token
+    func saveDeviceToken(_ token: String) async {
+        guard let uid = currentUser?.id else {
+            // Not signed in yet — cache and save on next sign-in
+            UserDefaults.standard.set(token, forKey: "pendingDeviceToken")
+            return
+        }
+        await persistDeviceToken(token, userId: uid)
+    }
+
+    private func persistDeviceToken(_ token: String, userId: String) async {
+        struct Update: Encodable {
+            let deviceToken: String
+            enum CodingKeys: String, CodingKey { case deviceToken = "device_token" }
+        }
+        try? await SupabaseService.shared.client
+            .from("users")
+            .update(Update(deviceToken: token))
+            .eq("id", value: userId)
+            .execute()
+        UserDefaults.standard.removeObject(forKey: "pendingDeviceToken")
+    }
+
     // MARK: - Change password
     @MainActor
     func updatePassword(_ newPassword: String) async {
@@ -134,6 +164,23 @@ final class AuthService: NSObject {
     // MARK: - Delete account
     @MainActor
     func deleteAccount() async {
+        // Delete all user-owned data before signing out. The auth.users record
+        // is deleted server-side via a Postgres trigger (on_user_deleted) that
+        // cascades when the users row is removed. The client cannot call
+        // auth.admin.deleteUser() directly — that requires the service-role key.
+        if let userId = currentUser?.id {
+            let client = SupabaseService.shared.client
+            // Remove this user's membership rows on other people's dogs.
+            try? await client.from("dog_owners").delete().eq("user_id", value: userId).execute()
+            // Remove any pending invitations addressed to this user's email.
+            if let email = currentUser?.email {
+                try? await client.from("dog_owners").delete().eq("invited_email", value: email).execute()
+            }
+            // Cascade-delete all dogs (and their care profiles / medications via FK cascade).
+            try? await client.from("dogs").delete().eq("owner_id", value: userId).execute()
+            // Delete the public users row; the DB trigger fires auth.admin.deleteUser().
+            try? await client.from("users").delete().eq("id", value: userId).execute()
+        }
         await signOut()
     }
 
@@ -149,6 +196,9 @@ final class AuthService: NSObject {
             .execute()
             .value as SupabaseUser {
             currentUser = user
+            if let pending = UserDefaults.standard.string(forKey: "pendingDeviceToken") {
+                await persistDeviceToken(pending, userId: id)
+            }
             return
         }
 

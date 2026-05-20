@@ -33,8 +33,8 @@ struct SitterView: View {
                                     .overlay(Image(systemName: "pawprint.fill").foregroundColor(Color.snootOrange))
                             }
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(dog.name).font(.system(size: 20, weight: .bold)).foregroundColor(Color.snootBrown)
-                                Text("\(dog.breed) · \(dog.age)").font(.system(size: 14)).foregroundColor(.snootText2)
+                                Text(dog.name).font(.jakarta(20, weight: .bold)).foregroundColor(Color.snootBrown)
+                                Text("\(dog.breed) · \(dog.age)\(dog.gender.isEmpty ? "" : " · \(dog.gender)")").font(.jakarta(14)).foregroundColor(.snootText2)
                             }
                             Spacer()
                         }
@@ -48,7 +48,7 @@ struct SitterView: View {
                                 InfoRow(label: "Feeding", value: "Free feed all day")
                             } else {
                                 InfoRow(label: "Meals per day", value: "\(dog.mealsPerDay)")
-                                let fmt = timeFormatter
+                                let fmt = SitterView.timeFormatter
                                 ForEach(Array(dog.mealTimesData.enumerated()), id: \.offset) { i, t in
                                     InfoRow(label: "Meal \(i+1)", value: fmt.string(from: t))
                                 }
@@ -68,7 +68,7 @@ struct SitterView: View {
                         // Walks
                         SitterSection(icon: "figure.walk", title: "Walks", iconColor: Color.snootSage) {
                             InfoRow(label: "Walks today", value: "\(dog.walksPerDay)")
-                            let fmt = timeFormatter
+                            let fmt = SitterView.timeFormatter
                             ForEach(Array(dog.walkTimesData.enumerated()), id: \.offset) { i, t in
                                 InfoRow(label: "Walk \(i+1)", value: "\(fmt.string(from: t)) · \(dog.walkDurationMinutes == 60 ? "1hr+" : "\(dog.walkDurationMinutes) min")")
                             }
@@ -86,9 +86,9 @@ struct SitterView: View {
                             SitterSection(icon: "pill", title: "Medications", iconColor: .purple.opacity(0.7)) {
                                 ForEach(dog.medications) { med in
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text(med.name).font(.system(size: 14, weight: .semibold)).foregroundColor(Color.snootBrown)
+                                        Text(med.name).font(.jakarta(14, weight: .semibold)).foregroundColor(Color.snootBrown)
                                         Text("\(med.dose) · \(med.timing) · \(med.method)")
-                                            .font(.system(size: 13)).foregroundColor(.snootText2)
+                                            .font(.jakarta(13)).foregroundColor(.snootText2)
                                     }
                                     .padding(.vertical, 2)
                                 }
@@ -96,7 +96,7 @@ struct SitterView: View {
                         }
 
                         // Behaviour flags
-                        if !dog.fearTriggers.isEmpty || dog.separationAnxiety != "None" || !dog.comfortItems.isEmpty || !dog.pottySignal.isEmpty {
+                        if !dog.fearTriggers.isEmpty || (dog.separationAnxiety != "None" && dog.separationAnxiety != "none") || !dog.comfortItems.isEmpty || !dog.pottySignal.isEmpty {
                             SitterSection(icon: "exclamationmark.triangle", title: "Heads up", iconColor: .orange) {
                                 if !dog.fearTriggers.isEmpty {
                                     InfoRow(label: "Fears / triggers", value: dog.fearTriggers.joined(separator: ", "), highlight: true)
@@ -122,7 +122,7 @@ struct SitterView: View {
                                 FlowLayout(spacing: 8) {
                                     ForEach(dog.personalityTags, id: \.self) { tag in
                                         Text(tag)
-                                            .font(.system(size: 13, weight: .medium))
+                                            .font(.jakarta(13, weight: .medium))
                                             .padding(.horizontal, 10).padding(.vertical, 5)
                                             .background(Color.snootOrange.opacity(0.1))
                                             .foregroundColor(Color.snootOrange)
@@ -141,7 +141,7 @@ struct SitterView: View {
                                 InfoRow(label: "Vet", value: [dog.vetName, dog.vetClinic, dog.vetPhone].filter { !$0.isEmpty }.joined(separator: " · "))
                             }
                             if dog.emergencyContact.isEmpty && dog.vetPhone.isEmpty {
-                                Text("No contacts added yet").font(.system(size: 14)).foregroundColor(.snootText2)
+                                Text("No contacts added yet").font(.jakarta(14)).foregroundColor(.snootText2)
                             }
                         }
 
@@ -149,7 +149,7 @@ struct SitterView: View {
                         if mode == .overnight {
                             SitterSection(icon: "moon.stars", title: "Bedtime", iconColor: Color(red: 0.4, green: 0.3, blue: 0.7)) {
                                 InfoRow(label: "Sleeps", value: dog.sleepLocation)
-                                InfoRow(label: "Bedtime", value: timeFormatter.string(from: dog.bedtimeDate))
+                                InfoRow(label: "Bedtime", value: SitterView.timeFormatter.string(from: dog.bedtimeDate))
                                 if !dog.bedtimeRoutine.isEmpty {
                                     InfoRow(label: "Routine", value: dog.bedtimeRoutine.joined(separator: ", "))
                                 }
@@ -162,7 +162,7 @@ struct SitterView: View {
                                 ForEach(first24Hours, id: \.self) { bullet in
                                     HStack(alignment: .top, spacing: 8) {
                                         Text("•").foregroundColor(Color.snootSage)
-                                        Text(bullet).font(.system(size: 14)).foregroundColor(Color.snootBrown)
+                                        Text(bullet).font(.jakarta(14)).foregroundColor(Color.snootBrown)
                                     }
                                 }
                             }
@@ -188,20 +188,21 @@ struct SitterView: View {
         var bullets: [String] = []
         if !dog.personalityTags.isEmpty {
             let top = dog.personalityTags.prefix(2).joined(separator: " and ")
-            bullets.append("\(dog.name) is \(top) — give them a few minutes to sniff around and settle in.")
+            bullets.append("\(dog.name) is \(top.lowercased()). Give \(dog.name) a few minutes to sniff around and settle in.")
         }
         if dog.mealsPerDay > 0 && !dog.mealTimesData.isEmpty {
-            let t = timeFormatter.string(from: dog.mealTimesData[0])
-            bullets.append("First meal is at \(t)\(dog.portionSize.isEmpty ? "" : " — \(dog.portionSize) \(dog.portionUnit) of \(dog.foodBrand.isEmpty ? "their regular food" : dog.foodBrand)").")
+            let t = SitterView.timeFormatter.string(from: dog.mealTimesData[0])
+            bullets.append("First meal is at \(t)\(dog.portionSize.isEmpty ? "" : ": \(dog.portionSize) \(dog.portionUnit) of \(dog.foodBrand.isEmpty ? "\(dog.name)'s regular food" : dog.foodBrand)").")
         }
         if dog.walksPerDay > 0 && !dog.walkTimesData.isEmpty {
-            let t = timeFormatter.string(from: dog.walkTimesData[0])
+            let t = SitterView.timeFormatter.string(from: dog.walkTimesData[0])
             bullets.append("First walk is around \(t) (\(dog.walkDurationMinutes == 60 ? "1hr+" : "\(dog.walkDurationMinutes) min")).")
         }
         if !dog.comfortItems.isEmpty {
-            bullets.append("If \(dog.name) seems unsettled, their comfort items are: \(dog.comfortItems).")
+            let comfort = dog.comfortItems.prefix(1).lowercased() + dog.comfortItems.dropFirst()
+            bullets.append("If \(dog.name) seems unsettled, \(dog.name)'s comfort items are: \(comfort).")
         } else if dog.separationAnxiety == "Moderate" || dog.separationAnxiety == "Severe" {
-            bullets.append("\(dog.name) can get anxious when left alone\(dog.separationAnxietyNotes.isEmpty ? "" : " — \(dog.separationAnxietyNotes)").")
+            bullets.append("\(dog.name) can get anxious when left alone\(dog.separationAnxietyNotes.isEmpty ? "" : ": \(dog.separationAnxietyNotes)").")
         }
         if bullets.count < 3 {
             bullets.append("When in doubt, give \(dog.name) a treat and a belly rub. Works every time.")
@@ -209,11 +210,11 @@ struct SitterView: View {
         return Array(bullets.prefix(4))
     }
 
-    var timeFormatter: DateFormatter {
+    static let timeFormatter: DateFormatter = {
         let f = DateFormatter()
         f.timeStyle = .short
         return f
-    }
+    }()
 }
 
 // MARK: - Reusable sitter section
@@ -227,13 +228,13 @@ struct SitterSection<Content: View>: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.jakarta(14, weight: .semibold))
                     .foregroundColor(iconColor)
                     .frame(width: 28, height: 28)
                     .background(iconColor.opacity(0.12))
                     .clipShape(Circle())
                 Text(title)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.jakarta(16, weight: .heavy))
                     .foregroundColor(Color.snootBrown)
             }
             content
@@ -256,12 +257,12 @@ struct InfoRow: View {
         HStack(alignment: .top, spacing: 8) {
             if !label.isEmpty {
                 Text(label)
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.jakarta(13, weight: .semibold))
                     .foregroundColor(.snootText2)
                     .frame(width: 95, alignment: .leading)
             }
             Text(value)
-                .font(.system(size: 14))
+                .font(.jakarta(14))
                 .foregroundColor(highlight ? Color(red: 0.8, green: 0.2, blue: 0.1) : Color.snootBrown)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }

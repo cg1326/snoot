@@ -2,6 +2,8 @@
 -- Without this, viewers can't see the owner's name/email in Family Access,
 -- and other members' display names fall back to their invited email.
 
+drop policy if exists "Dog members can view co-member profiles" on public.users;
+
 create policy "Dog members can view co-member profiles"
   on public.users for select using (
     -- Always see own profile (existing policy already covers this, belt-and-suspenders)

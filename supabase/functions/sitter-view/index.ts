@@ -68,11 +68,6 @@ serve(async (req: Request) => {
 
   const wantsHtml = req.headers.get("accept")?.includes("text/html");
 
-  if (!wantsJson && wantsHtml) {
-    const frontendBase = Deno.env.get("FRONTEND_URL") || "https://snoot-web-zeta.vercel.app";
-    return Response.redirect(`${frontendBase}/${token}`, 302);
-  }
-
   // ── Fetch sitter link ──
   const { data: link, error: linkErr } = await supabase
     .from("sitter_links")
@@ -90,7 +85,7 @@ serve(async (req: Request) => {
   // ── Fetch dog separately ──
   const { data: dog } = await supabase
     .from("dogs")
-    .select("id, name, breed, dob, weight_lbs, photo_url, bio")
+    .select("id, name, breed, dob, weight_lbs, photo_url, bio, gender, personality_tags")
     .eq("id", link.dog_id)
     .single();
 
@@ -138,9 +133,10 @@ serve(async (req: Request) => {
     });
   }
 
-  const html = buildCareGuidePage(dog, link, careMap, token);
-  return new Response(html, {
-    headers: { ...corsHeaders, "Content-Type": "text/html; charset=utf-8" },
+  const frontendBase = Deno.env.get("FRONTEND_URL") || "https://snoot-web-zeta.vercel.app";
+  const ogHtml = buildOGPage(dog, token, frontendBase);
+  return new Response(ogHtml, {
+    headers: { ...corsHeaders, "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" },
   });
 });
 
@@ -200,11 +196,29 @@ async function handleVisitLog(req: Request, token: string, url: URL, corsHeaders
 
   const { data: dogRow } = await supabase
     .from("dogs")
-    .select("name")
+    .select("name, owner_id")
     .eq("id", link.dog_id)
     .single();
   const dogName = dogRow?.name ?? "your pup";
-  
+
+  // Fire push notification to the dog owner (best-effort, never blocks response)
+  if (dogRow?.owner_id) {
+    supabase
+      .from("users")
+      .select("device_token")
+      .eq("id", dogRow.owner_id)
+      .single()
+      .then(({ data: ownerRow }) => {
+        if (ownerRow?.device_token) {
+          sendPush(
+            ownerRow.device_token,
+            `${sitterName} just logged a visit`,
+            `${dogName} is in good hands 🐾`
+          ).catch(() => {/* ignore push failures */});
+        }
+      });
+  }
+
   if (wantsJson) {
     return new Response(JSON.stringify({ success: true, message: "Visit logged successfully." }), {
       headers: jsonHeaders,
@@ -216,7 +230,83 @@ async function handleVisitLog(req: Request, token: string, url: URL, corsHeaders
   });
 }
 
+// ── APNs push notification ───────────────────────────────────────
+async function sendPush(deviceToken: string, title: string, body: string): Promise<void> {
+  const apnsKey = Deno.env.get("APNS_KEY");
+  const keyId = Deno.env.get("APNS_KEY_ID");
+  const teamId = Deno.env.get("APNS_TEAM_ID");
+  const bundleId = Deno.env.get("APNS_BUNDLE_ID") ?? "com.snoot.app";
+  const sandbox = Deno.env.get("APNS_ENVIRONMENT") !== "production";
+  if (!apnsKey || !keyId || !teamId) return;
+
+  // Import the EC private key from the .p8 PEM
+  const pemBody = apnsKey.replace(/-----[^-]+-----/g, "").replace(/\s/g, "");
+  const keyData = Uint8Array.from(atob(pemBody), (c) => c.charCodeAt(0));
+  const privateKey = await crypto.subtle.importKey(
+    "pkcs8", keyData, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]
+  );
+
+  // Build JWT header.payload
+  const b64url = (obj: object) =>
+    btoa(JSON.stringify(obj)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+  const header = b64url({ alg: "ES256", kid: keyId });
+  const payload = b64url({ iss: teamId, iat: Math.floor(Date.now() / 1000) });
+  const signingInput = `${header}.${payload}`;
+
+  const rawSig = await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" },
+    privateKey,
+    new TextEncoder().encode(signingInput)
+  );
+  const sig = btoa(String.fromCharCode(...new Uint8Array(rawSig)))
+    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+  const jwt = `${signingInput}.${sig}`;
+
+  const host = sandbox ? "api.sandbox.push.apple.com" : "api.push.apple.com";
+  await fetch(`https://${host}/3/device/${deviceToken}`, {
+    method: "POST",
+    headers: {
+      "authorization": `bearer ${jwt}`,
+      "apns-topic": bundleId,
+      "apns-push-type": "alert",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ aps: { alert: { title, body }, sound: "default" } }),
+  });
+}
+
 // ── HTML builders ───────────────────────────────────────────────
+function buildOGPage(dog: any, token: string, frontendBase: string): string {
+  const name = dog?.name || "Your dog";
+  const title = `${name}'s care guide`;
+  const description = `Care instructions for ${name} — feeding, walks, bedtime & more.`;
+  const photo = dog?.photo_url || "";
+  const ogUrl = `${frontendBase}/${token}`;
+  const redirectUrl = `${frontendBase}/?token=${token}`;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${title}</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="${ogUrl}" />
+  <meta property="og:title" content="${title}" />
+  <meta property="og:description" content="${description}" />
+  <meta name="twitter:title" content="${title}" />
+  <meta name="twitter:description" content="${description}" />
+  ${photo
+    ? `<meta property="og:image" content="${photo}" />\n  <meta name="twitter:image" content="${photo}" />\n  <meta name="twitter:card" content="summary_large_image" />`
+    : `<meta name="twitter:card" content="summary" />`}
+</head>
+<body>
+  <script>window.location.replace("${redirectUrl}");</script>
+  <noscript><meta http-equiv="refresh" content="0;url=${redirectUrl}" /></noscript>
+</body>
+</html>`;
+}
+
 function buildCareGuidePage(
   dog: Record<string, unknown>,
   link: Record<string, unknown>,
@@ -414,7 +504,7 @@ function buildCareGuidePage(
   <div class="hero">
     ${photoHtml}
     <div class="dog-name">${esc(dog.name as string)}'s Care Guide</div>
-    <div class="dog-meta">${esc(dog.breed as string ?? "")}${dog.dob ? " · " + calcAge(dog.dob as string) : ""}</div>
+    <div class="dog-meta">${esc(dog.breed as string ?? "")}${dog.dob ? " · " + calcAge(dog.dob as string) : ""}${dog.gender ? " · " + esc(dog.gender as string) : ""}</div>
     <div class="mode-badge">${mode === "both" ? "Daytime + Overnight" : mode === "overnight" ? "Overnight" : "Daytime"} care</div>
     ${personalityTags.length ? `<div class="tags">${personalityTags.slice(0, 5).map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div>` : ""}
     ${dog.bio ? `<p style="font-size:14px;color:#888;margin-top:12px;line-height:1.5">${esc(dog.bio as string)}</p>` : ""}
@@ -446,7 +536,7 @@ function buildCareGuidePage(
   ${medications.length ? sectionHtml("&#x1F48A;", "#9b59b6", "Medications", medications.map((m) =>
     `<div style="margin-bottom:8px">
        <div style="font-size:14px;font-weight:600">${esc(m.name)}</div>
-       <div style="font-size:13px;color:#888">${esc(m.dose)} · ${esc(m.timing)} · ${esc(m.method)}</div>
+       <div style="font-size:13px;color:#888">${[m.dose, m.timing, m.method].filter(Boolean).map((s) => esc(s as string)).join(" · ")}</div>
      </div>`
   ).join('<div class="divider"></div>')) : ""}
 
@@ -623,7 +713,7 @@ function confirmationPage(dogName: string, token: string): string {
   <div class="card">
     <div class="emoji">&#x1F436;</div>
     <h1>${esc(dogName)} is lucky to have you</h1>
-    <p>Your visit has been logged and the owner has been notified.</p>
+    <p>Your visit has been logged.</p>
     <a href="https://jmwlizpemivsadimplsa.supabase.co/functions/v1/sitter-view/${esc(token)}">Back to care guide</a>
   </div>
 </body></html>`;

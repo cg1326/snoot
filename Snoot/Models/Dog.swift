@@ -8,6 +8,7 @@ class Dog {
     var breed: String = ""
     var dateOfBirth: Date = Calendar.current.date(byAdding: .year, value: -2, to: Date()) ?? Date()
     var weightLbs: Double = 25.0
+    var gender: String = ""
     var photoData: Data? = nil
     var createdAt: Date = Date()
 
@@ -34,7 +35,7 @@ class Dog {
 
     // Behaviour
     var fearTriggers: [String] = []
-    var separationAnxiety: String = "none"
+    var separationAnxiety: String = "None"
     var separationAnxietyNotes: String = ""
     var pottySignal: String = ""
     var comfortItems: String = ""
@@ -55,6 +56,7 @@ class Dog {
     var bedtimeRoutine: [String] = []
     var nighttimeQuirks: String = ""
 
+    var sortOrder: Int = 0
     var onboardingComplete: Bool = false
     var isSample: Bool = false
 

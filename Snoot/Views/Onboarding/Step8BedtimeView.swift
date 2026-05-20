@@ -15,7 +15,7 @@ struct Step8BedtimeView: View {
             title: "Bedtime",
             subtitle: "How does \(vm.name.isEmpty ? "your dog" : vm.name) wind down?",
             vm: vm,
-            skipLabel: "Skip — add later",
+            skipLabel: "Skip for now",
             onSkip: { vm.skip() },
             continueLabel: "All done!"
         ) {
@@ -23,7 +23,7 @@ struct Step8BedtimeView: View {
                 // Sleep location
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Where they sleep", systemImage: "moon.stars")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     SnootSegmentedControl(
                         options: sleepOptions,
                         selection: $vm.sleepLocation,
@@ -34,7 +34,7 @@ struct Step8BedtimeView: View {
                 // Bedtime
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Approximate bedtime", systemImage: "clock.fill")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     DatePicker("", selection: $vm.bedtimeDate, displayedComponents: .hourAndMinute)
                         .labelsHidden()
                         .padding(12).background(Color.white)
@@ -45,7 +45,7 @@ struct Step8BedtimeView: View {
                 // Bedtime routine
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Bedtime routine", systemImage: "checkmark.circle")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     TagChipGrid(
                         options: bedtimeRoutineOptions,
                         selected: $vm.bedtimeRoutine,
@@ -61,7 +61,7 @@ struct Step8BedtimeView: View {
                 // Night quirks
                 VStack(alignment: .leading, spacing: 6) {
                     Label("Night-time quirks", systemImage: "moon.zzz")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     HighContrastTextField(placeholder: "e.g. wakes up around 5am, barks at the neighbour's cat", text: $vm.nighttimeQuirks)
                         .fieldStyle()
                 }

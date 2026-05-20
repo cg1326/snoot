@@ -2,18 +2,34 @@ import SwiftUI
 import SwiftData
 import UserNotifications
 
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let token = deviceToken.map { String(format: "%02x", $0) }.joined()
+        NotificationCenter.default.post(name: .apnsTokenReceived, object: token)
+    }
+    func application(_ application: UIApplication,
+                     didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        #if DEBUG
+        print("[APNs] Failed to register: \(error)")
+        #endif
+    }
+}
+
+extension Notification.Name {
+    static let apnsTokenReceived = Notification.Name("apnsTokenReceived")
+}
+
 @main
 struct SnootApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     let container: ModelContainer
     @State private var authService = AuthService()
     @State private var networkMonitor = NetworkMonitor.shared
+    @State private var subscriptionService = SubscriptionService()
 
     init() {
-        do {
-            container = try ModelContainer(for: Dog.self, Medication.self)
-        } catch {
-            fatalError("Failed to create ModelContainer: \(error)")
-        }
+        container = try! ModelContainer(for: Dog.self, Medication.self, ManualVisit.self)
     }
 
     var body: some Scene {
@@ -22,6 +38,7 @@ struct SnootApp: App {
                 .preferredColorScheme(.light)
                 .environment(authService)
                 .environment(networkMonitor)
+                .environment(subscriptionService)
                 .task {
                     await SampleData.seedIfNeeded(context: container.mainContext)
                     // Background sync on launch
@@ -31,8 +48,11 @@ struct SnootApp: App {
                     )
                 }
                 .onAppear {
-                    // Request notification permission on first launch
                     VisitHistoryView.requestNotificationPermission()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .apnsTokenReceived)) { note in
+                    guard let token = note.object as? String else { return }
+                    Task { await authService.saveDeviceToken(token) }
                 }
         }
         .modelContainer(container)

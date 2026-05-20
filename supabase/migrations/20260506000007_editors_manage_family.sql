@@ -2,6 +2,7 @@
 -- Previously only the original dog owner could manage dog_owners.
 -- Editors are trusted family members who should share this responsibility.
 
+drop policy if exists "Editors can manage dog_owners" on public.dog_owners;
 create policy "Editors can manage dog_owners"
   on public.dog_owners for all using (
     exists (

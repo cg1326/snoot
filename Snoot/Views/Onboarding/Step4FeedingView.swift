@@ -19,7 +19,7 @@ struct Step4FeedingView: View {
                 // Meals per day
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Meals per day", systemImage: "fork.knife")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     SnootSegmentedControl(
                         options: [0, 1, 2, 3, 4],
                         selection: $vm.mealsPerDay,
@@ -32,11 +32,11 @@ struct Step4FeedingView: View {
                 if vm.mealsPerDay > 0 {
                     VStack(alignment: .leading, spacing: 8) {
                         Label("Meal times", systemImage: "clock")
-                            .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                            .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                         ForEach(0..<vm.mealsPerDay, id: \.self) { i in
                             HStack {
                                 Text("Meal \(i + 1)")
-                                    .font(.system(size: 14)).foregroundColor(.snootBrown)
+                                    .font(.jakarta(14, weight: .bold)).foregroundColor(.snootBrown)
                                 Spacer()
                                 DatePicker("", selection: Binding(
                                     get: { vm.mealTimes.indices.contains(i) ? vm.mealTimes[i] : Date() },
@@ -55,7 +55,7 @@ struct Step4FeedingView: View {
                 // Portion
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Portion size", systemImage: "cup.and.saucer")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     HStack(spacing: 10) {
                         HighContrastTextField(placeholder: "e.g. 1.5", text: $vm.portionSize)
                             .keyboardType(.decimalPad)
@@ -72,7 +72,7 @@ struct Step4FeedingView: View {
                 // Food brand
                 VStack(alignment: .leading, spacing: 6) {
                     Label("Food brand / type", systemImage: "bag")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     HighContrastTextField(placeholder: "e.g. Royal Canin Medium Adult", text: $vm.foodBrand)
                         .fieldStyle()
                 }
@@ -80,7 +80,7 @@ struct Step4FeedingView: View {
                 // Allergies
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Allergies / foods to avoid", systemImage: "exclamationmark.triangle")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     if !vm.foodAllergies.isEmpty {
                         FlowLayout(spacing: 8) {
                             ForEach(vm.foodAllergies, id: \.self) { tag in
@@ -92,7 +92,7 @@ struct Step4FeedingView: View {
                     }
                     HStack(spacing: 8) {
                         HighContrastTextField(placeholder: "Add allergy…", text: $vm.newAllergyTag)
-                            .font(.system(size: 14))
+                            .font(.jakarta(14))
                             .fieldStyle()
                             .submitLabel(.done)
                             .onSubmit { addAllergy() }
@@ -108,7 +108,7 @@ struct Step4FeedingView: View {
                 // Treats
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Treats", systemImage: "star")
-                        .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                        .font(.jakarta(13, weight: .bold)).foregroundColor(.snootText2)
                     SnootSegmentedControl(
                         options: treatOptions,
                         selection: $vm.treatsPolicy,

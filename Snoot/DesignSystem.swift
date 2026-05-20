@@ -31,13 +31,36 @@ extension Color {
 
 // MARK: - Typography
 struct SnootType {
-    static let display = Font.system(size: 34, weight: .bold)
-    static let title1  = Font.system(size: 28, weight: .bold)
-    static let title2  = Font.system(size: 22, weight: .semibold)
-    static let title3  = Font.system(size: 18, weight: .semibold)
-    static let body    = Font.system(size: 16, weight: .regular)
-    static let caption = Font.system(size: 13, weight: .regular)
-    static let label   = Font.system(size: 12, weight: .medium)
+    static let display = Font.jakarta(34, weight: .bold)
+    static let title1  = Font.jakarta(28, weight: .bold)
+    static let title2  = Font.jakarta(22, weight: .semibold)
+    static let title3  = Font.jakarta(18, weight: .semibold)
+    static let body    = Font.jakarta(16, weight: .regular)
+    static let caption = Font.jakarta(13, weight: .regular)
+    static let label   = Font.jakarta(12, weight: .medium)
+    static let mono    = Font.system(.caption, design: .monospaced) // Keep monospaced as system font
+}
+
+extension Font {
+    func fallback(_ fallback: Font) -> Font {
+        // Simple helper to handle custom font fallbacks
+        self
+    }
+
+    /// Returns the appropriate Plus Jakarta Sans variant for the given size and weight.
+    static func jakarta(_ size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        let name: String
+        switch weight {
+        case .black, .heavy:             name = "PlusJakartaSans-ExtraBold"
+        case .bold:                      name = "PlusJakartaSans-Bold"
+        case .semibold:                  name = "PlusJakartaSans-SemiBold"
+        case .medium:                    name = "PlusJakartaSans-Medium"
+        case .light:                     name = "PlusJakartaSans-Light"
+        case .ultraLight, .thin:         name = "PlusJakartaSans-ExtraLight"
+        default:                         name = "PlusJakartaSans-Regular"
+        }
+        return .custom(name, size: size).weight(weight)
+    }
 }
 
 // MARK: - Corner Radii
@@ -101,9 +124,8 @@ struct SectionHeader: View {
     let title: String
     var body: some View {
         Text(title)
-            .font(.system(size: 13, weight: .bold))
+            .font(.jakarta(17, weight: .heavy))
             .foregroundColor(.snootText1)
-            .textCase(.uppercase)
             .padding(.leading, 4)
             .padding(.bottom, 4)
     }
@@ -122,7 +144,7 @@ struct SnootSegmentedControl<T: Hashable>: View {
                     selection = option
                 } label: {
                     Text(label(option))
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.jakarta(14, weight: .semibold))
                         .frame(maxWidth: .infinity)
                         .frame(height: 36)
                         .background(selection == option ? Color.white : Color.clear)
@@ -147,17 +169,17 @@ struct HighContrastTextField: View {
         ZStack(alignment: .leading) {
             if text.isEmpty {
                 Text(placeholder)
-                    .font(.system(size: 16))
+                    .font(.jakarta(16))
                     .foregroundColor(.snootText3)
                     .padding(.leading, 4)
             }
             if isSecure {
                 SecureField("", text: $text)
-                    .font(.system(size: 16))
+                    .font(.jakarta(16))
                     .foregroundColor(.snootText1)
             } else {
                 TextField("", text: $text)
-                    .font(.system(size: 16))
+                    .font(.jakarta(16))
                     .foregroundColor(.snootText1)
             }
         }

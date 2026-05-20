@@ -7,12 +7,14 @@ import Observation
 class OnboardingViewModel {
     var currentStep: Int = 1
     let totalSteps: Int = 8
+    var readOnly: Bool = false
 
     // Step 1
     var name: String = ""
-    var breed: String = "Labrador Retriever"
+    var breed: String = ""
     var dateOfBirth: Date = Calendar.current.date(byAdding: .year, value: -2, to: Date()) ?? Date()
     var weightLbs: Double = 35
+    var gender: String = ""
     var photoData: Data? = nil
     var selectedPhoto: PhotosPickerItem? = nil
 
@@ -85,6 +87,7 @@ class OnboardingViewModel {
         breed = dog.breed
         dateOfBirth = dog.dateOfBirth
         weightLbs = dog.weightLbs
+        gender = dog.gender
         photoData = dog.photoData
         personalityTags = Set(dog.personalityTags)
         bio = dog.bio
@@ -125,8 +128,9 @@ class OnboardingViewModel {
         dog.breed = breed
         dog.dateOfBirth = dateOfBirth
         dog.weightLbs = weightLbs
+        dog.gender = gender
+        if photoData != dog.photoData { dog.supabasePhotoUploaded = false }
         dog.photoData = photoData
-        dog.supabasePhotoUploaded = false
         dog.personalityTags = Array(personalityTags)
         dog.bio = bio
         dog.mealsPerDay = mealsPerDay
@@ -198,6 +202,7 @@ class OnboardingViewModel {
         dog.breed = breed
         dog.dateOfBirth = dateOfBirth
         dog.weightLbs = weightLbs
+        dog.gender = gender
         dog.photoData = photoData
         dog.personalityTags = Array(personalityTags)
         dog.bio = bio

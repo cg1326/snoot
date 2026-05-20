@@ -18,10 +18,10 @@ struct SectionCard<Content: View>: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.jakarta(15, weight: .semibold))
                     .foregroundColor(iconColor)
                 Text(title)
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(.jakarta(17, weight: .semibold))
                     .foregroundColor(.snootText1)
             }
             content
@@ -43,6 +43,7 @@ struct OnboardingStep<Content: View>: View {
     let onSkip: () -> Void
     let onContinue: (() -> Void)?
     let continueLabel: String
+    let continueDisabled: Bool
     @ViewBuilder let content: Content
 
     init(
@@ -52,6 +53,7 @@ struct OnboardingStep<Content: View>: View {
         skipLabel: String = "Add later",
         onSkip: @escaping () -> Void,
         continueLabel: String = "Continue",
+        continueDisabled: Bool = false,
         onContinue: (() -> Void)? = nil,
         @ViewBuilder content: () -> Content
     ) {
@@ -61,6 +63,7 @@ struct OnboardingStep<Content: View>: View {
         self.skipLabel = skipLabel
         self.onSkip = onSkip
         self.continueLabel = continueLabel
+        self.continueDisabled = continueDisabled
         self.onContinue = onContinue
         self.content = content()
     }
@@ -86,7 +89,19 @@ struct OnboardingStep<Content: View>: View {
             ProgressBarView(currentStep: vm.currentStep, totalSteps: vm.totalSteps)
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
-                .padding(.bottom, 20)
+                .padding(.bottom, vm.readOnly ? 8 : 20)
+
+            // View-only badge
+            if vm.readOnly {
+                Text("View only")
+                    .font(.jakarta(12, weight: .semibold))
+                    .foregroundColor(.snootText2)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(Color.snootText2.opacity(0.1))
+                    .clipShape(Capsule())
+                    .padding(.bottom, 12)
+            }
 
             // Illustration zone
             ZStack {
@@ -99,7 +114,7 @@ struct OnboardingStep<Content: View>: View {
                     ))
                     .frame(width: 110, height: 110)
                 Image(systemName: stepSymbol)
-                    .font(.system(size: 52))
+                    .font(.jakarta(52))
                     .foregroundColor(.snootOrange)
             }
             .padding(.bottom, 20)
@@ -107,13 +122,13 @@ struct OnboardingStep<Content: View>: View {
             // Title + subtitle
             VStack(spacing: 6) {
                 Text(title)
-                    .font(.system(size: 28, weight: .bold))
+                    .font(.jakarta(28, weight: .black))
                     .foregroundColor(.snootText1)
                     .multilineTextAlignment(.center)
                     .tracking(-0.3)
                 if let sub = subtitle {
                     Text(sub)
-                        .font(.system(size: 15))
+                        .font(.jakarta(15))
                         .foregroundColor(.snootText1)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
@@ -129,24 +144,46 @@ struct OnboardingStep<Content: View>: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 24)
                         .padding(.bottom, 16)
+                        .disabled(vm.readOnly)
 
-                    // CTA + skip
+                    // CTA
                     VStack(spacing: 12) {
-                        Button(action: { if let c = onContinue { c() } else { vm.advance() } }) {
-                            Text(continueLabel)
-                                .font(.system(size: 17, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 56)
-                                .background(Color.snootOrange)
-                                .clipShape(RoundedRectangle(cornerRadius: SnootRadius.medium))
-                        }
-                        .buttonStyle(SpringButtonStyle())
+                        if vm.readOnly {
+                            let isLast = vm.currentStep == vm.totalSteps
+                            Button(action: {
+                                if isLast {
+                                    vm.currentStep = vm.totalSteps + 1
+                                } else {
+                                    vm.advance()
+                                }
+                            }) {
+                                Text(isLast ? "Close" : "Next")
+                                    .font(.jakarta(17, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 56)
+                                    .background(Color.snootOrange)
+                                    .clipShape(RoundedRectangle(cornerRadius: SnootRadius.medium))
+                            }
+                            .buttonStyle(SpringButtonStyle())
+                        } else {
+                            Button(action: { if let c = onContinue { c() } else { vm.advance() } }) {
+                                Text(continueLabel)
+                                    .font(.jakarta(17, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 56)
+                                    .background(continueDisabled ? Color.snootOrange.opacity(0.4) : Color.snootOrange)
+                                    .clipShape(RoundedRectangle(cornerRadius: SnootRadius.medium))
+                            }
+                            .buttonStyle(SpringButtonStyle())
+                            .disabled(continueDisabled)
 
-                        Button(action: onSkip) {
-                            Text(skipLabel)
-                                .font(.system(size: 15))
-                                .foregroundColor(.snootText2)
+                            Button(action: onSkip) {
+                                Text(skipLabel)
+                                    .font(.jakarta(15))
+                                    .foregroundColor(.snootText2)
+                            }
                         }
                     }
                     .padding(.horizontal, 20)

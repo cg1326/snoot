@@ -41,6 +41,7 @@ supabase/.temp/
 .env.local
 .env.*.local
 *.pem
+*.p8
 
 # Editor
 .vscode/

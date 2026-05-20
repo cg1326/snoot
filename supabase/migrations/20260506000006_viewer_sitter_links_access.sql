@@ -2,6 +2,8 @@
 -- Previously only owners and editors had any policy on this table,
 -- so viewers got zero rows back from fetchSitterLinks.
 
+drop policy if exists "Members can view sitter links" on public.sitter_links;
+
 create policy "Members can view sitter links"
   on public.sitter_links for select using (
     -- Primary dog owner

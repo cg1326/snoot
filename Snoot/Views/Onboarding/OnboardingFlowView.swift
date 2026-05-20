@@ -7,17 +7,20 @@ struct OnboardingFlowView: View {
     
     let editingDog: Dog?
     let startingStep: Int
+    let readOnly: Bool
     let onComplete: (Dog) -> Void
     @State private var vm: OnboardingViewModel
 
-    init(editingDog: Dog? = nil, startingStep: Int = 1, onComplete: @escaping (Dog) -> Void) {
+    init(editingDog: Dog? = nil, startingStep: Int = 1, readOnly: Bool = false, onComplete: @escaping (Dog) -> Void) {
         self.editingDog = editingDog
         self.startingStep = startingStep
+        self.readOnly = readOnly
         self.onComplete = onComplete
-        
+
         let initialVM = OnboardingViewModel()
         if let dog = editingDog { initialVM.load(from: dog) }
         initialVM.currentStep = startingStep
+        initialVM.readOnly = readOnly
         _vm = State(initialValue: initialVM)
     }
 
@@ -48,11 +51,15 @@ struct OnboardingFlowView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        dismiss()
+                        if editingDog != nil && !vm.readOnly {
+                            finish()
+                        } else {
+                            dismiss()
+                        }
                     } label: {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(Color.snootText3)
-                            .font(.system(size: 24))
+                            .font(.jakarta(24))
                     }
                 }
             }
@@ -78,6 +85,10 @@ struct OnboardingFlowView: View {
     }
 
     private func finish() {
+        if vm.readOnly {
+            dismiss()
+            return
+        }
         if let existing = editingDog {
             vm.applyEdits(to: existing, context: context)
             onComplete(existing)
@@ -98,7 +109,7 @@ private struct Step8BedtimeFinisher: View {
             title: "Bedtime",
             subtitle: "How does \(vm.name.isEmpty ? "your dog" : vm.name) wind down?",
             vm: vm,
-            skipLabel: "Skip — finish profile",
+            skipLabel: "Skip to finish",
             onSkip: onFinish,
             continueLabel: "Finish profile ✓",
             onContinue: onFinish
@@ -120,7 +131,7 @@ private struct Step8BedtimeContent: View {
         VStack(spacing: 18) {
             VStack(alignment: .leading, spacing: 8) {
                 Label("Where they sleep", systemImage: "moon.stars")
-                    .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                    .font(.jakarta(13, weight: .semibold)).foregroundColor(.snootText2)
                 SnootSegmentedControl(
                     options: sleepOptions,
                     selection: $vm.sleepLocation,
@@ -129,7 +140,7 @@ private struct Step8BedtimeContent: View {
             }
             VStack(alignment: .leading, spacing: 8) {
                 Label("Approximate bedtime", systemImage: "clock.fill")
-                    .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                    .font(.jakarta(13, weight: .semibold)).foregroundColor(.snootText2)
                 DatePicker("", selection: $vm.bedtimeDate, displayedComponents: .hourAndMinute)
                     .labelsHidden().padding(12).background(Color.white)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -137,7 +148,7 @@ private struct Step8BedtimeContent: View {
             }
             VStack(alignment: .leading, spacing: 8) {
                 Label("Bedtime routine", systemImage: "checkmark.circle")
-                    .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                    .font(.jakarta(13, weight: .semibold)).foregroundColor(.snootText2)
                 TagChipGrid(
                     options: bedtimeRoutineOptions,
                     selected: $vm.bedtimeRoutine,
@@ -151,7 +162,7 @@ private struct Step8BedtimeContent: View {
             }
             VStack(alignment: .leading, spacing: 6) {
                 Label("Night-time quirks", systemImage: "moon.zzz")
-                    .font(.system(size: 13, weight: .semibold)).foregroundColor(.snootText2)
+                    .font(.jakarta(13, weight: .semibold)).foregroundColor(.snootText2)
                 HighContrastTextField(placeholder: "e.g. wakes up around 5am, barks at the neighbour's cat", text: $vm.nighttimeQuirks)
                     .fieldStyle()
             }
