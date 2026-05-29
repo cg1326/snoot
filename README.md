@@ -4,7 +4,7 @@ Most dog owners know their pet's routine cold. The problem is communicating it, 
 
 Snoot is an iOS app for building a shareable dog care guide. One link covers feeding, walks, behavior, health, and medications. The sitter opens it in any browser, no app required. When they arrive, they log the visit, and the owner gets a notification.
 
-https://apps.apple.com/us/app/snoot-your-dogs-care-guide/id6767620183
+[Download on the App Store](https://apps.apple.com/us/app/snoot-your-dogs-care-guide/id6767620183)
 
 <table>
   <tr>
