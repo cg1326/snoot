@@ -1,4 +1,4 @@
-# snoot
+# Snoot: Your Dog's Care Guide
 
 Most dog owners know their pet's routine cold. The problem is communicating it, as pet sitters get a wall of texts, a rushed verbal handoff, or a notes app screenshot that's already out of date.
 
