@@ -41,6 +41,11 @@ Where's the food? How much? Does she get a walk before bed or after? What's the 
 
 Snoot is for the part where you're answering a bunch of those one off questions. Build your dog's profile once: routine, feeding schedule, medications, emergency contacts, the couch policy, and share it as a link. Your sitter doesn't need to download anything and you don't need to repeat yourself.
 
-## Tech
+## Tech stack
 
-SwiftUI, SwiftData, StoreKit 2, Supabase (auth, database, edge functions), APNs push notifications, Vercel (sitter web view).
+- SwiftUI
+- SwiftData
+- StoreKit 2
+- Supabase (auth, database, edge functions)
+- APNs push notifications
+- Vercel (sitter web view).
