@@ -32,6 +32,15 @@ Sitter links, visit logging, notifications, and family access are behind a subsc
 
 Monthly ($3.99/mo) and yearly ($24.99/yr) plans available.
 
+## Why not Rover or Wag?
+
+Those apps solve the "who." Finding someone trustworthy to watch your dog is its own whole thing, and they're good at it.
+But once you have your person, i.e., the neighbor who's met your dog, your friend who's watched her before, your cousin who owes you a favor, Rover becomes irrelevant. What you're left with is a  very long message thread every single time you leave town.
+
+Where's the food? How much? Does she get a walk before bed or after? What's the vet's number? Is she allowed on the couch? (She's going to get on the couch regardless, but still.)
+
+Snoot is for the part where you're answering a bunch of those one off questions. Build your dog's profile once: routine, feeding schedule, medications, emergency contacts, the couch policy, and share it as a link. Your sitter doesn't need to download anything and you don't need to repeat yourself.
+
 ## Tech
 
 SwiftUI, SwiftData, StoreKit 2, Supabase (auth, database, edge functions), APNs push notifications, Vercel (sitter web view).
