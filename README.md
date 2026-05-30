@@ -48,4 +48,4 @@ Snoot is for the part where you're answering a bunch of those one off questions.
 - StoreKit 2
 - Supabase (auth, database, edge functions)
 - APNs push notifications
-- Vercel (sitter web view).
+- Vercel (sitter web view)
